@@ -1,4 +1,4 @@
-"""Tests for the streamrecorder.io page parser (fixture HTML, no network)."""
+"""Tests for the streamrecorder.io page parser + fresh-link resolver."""
 
 import pytest
 
@@ -7,6 +7,17 @@ from app.models import Recording
 from app.sources import streamrecorder as sr
 from app.sources.streamrecorder import StreamRecorderSource
 from app.timeutil import parse_hhmmss, parse_site_date
+
+
+class FakeResp:
+    def __init__(self, text="", status_code=200, headers=None):
+        self.text = text
+        self.status_code = status_code
+        self.headers = headers or {}
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise AssertionError(f"HTTP {self.status_code}")
 
 
 FIXTURE = """
@@ -45,15 +56,8 @@ const data_sources = [{"size": 720, "src": "https://walterlike.eu.srcdn.net/ddlp
 def make_source(monkeypatch, html=FIXTURE):
     cfg = Config(streamers=["beaststatsofficial"])
     src = StreamRecorderSource(cfg)
-
-    class FakeResp:
-        status_code = 200
-        text = html
-
-        def raise_for_status(self):
-            pass
-
-    monkeypatch.setattr(src.session, "get", lambda url, timeout=None: FakeResp())
+    monkeypatch.setattr(src.session, "get",
+                        lambda url, timeout=None, **kw: FakeResp(text=html))
     return src
 
 
@@ -111,19 +115,93 @@ class TestParsing:
         html = FIXTURE.replace("ddlprev", "ddl")
         cfg = Config(streamers=["x"], streamrecorder_cookie="sessionid=abc")
         src = StreamRecorderSource(cfg)
-
-        class FakeResp:
-            status_code = 200
-            text = html
-
-            def raise_for_status(self):
-                pass
-
-        monkeypatch.setattr(src.session, "get", lambda url, timeout=None: FakeResp())
+        monkeypatch.setattr(src.session, "get",
+                            lambda url, timeout=None, **kw: FakeResp(text=html))
         rec = Recording(source_id="235918109", channel="x", rec_date="2026-11-05")
         url, mode = src.get_download_url(rec)
         assert mode == "full"
         assert "/ddl/" in url
+
+    # ------------------------------------------------ resolver unit tests
+    def test_ensure_dl1(self):
+        u = "https://kattahduck.eu.srcdn.net/ddl/uuid/file.mp4?iv=A&enc=B"
+        assert sr._ensure_dl1(u) == u + "&dl=1"
+        assert sr._ensure_dl1(u + "&dl=1") == u + "&dl=1"
+        assert sr._ensure_dl1("https://host/file.mp4").endswith("?dl=1")
+
+    SIGNED = ("https://kattahduck.eu.srcdn.net/ddl/76391bba-15a4-404e-a906-88ab8fe44b99/"
+              "twitch_beaststatsofficial_2026-11-04%2019-56-39_720p.mp4?iv=A&enc=B")
+
+    def _resolver(self, monkeypatch, page_html, mphp_resp):
+        cfg = Config(streamers=["beaststatsofficial"],
+                     streamrecorder_cookie="Authorization=a; bkndsrv=b")
+        src = StreamRecorderSource(cfg)
+
+        def fake_get(url, timeout=None, **kw):
+            if "m.php" in url:
+                assert kw.get("allow_redirects") is False
+                return mphp_resp
+            return FakeResp(text=page_html)
+
+        monkeypatch.setattr(src.session, "get", fake_get)
+        return src
+
+    def test_resolve_via_redirect(self, monkeypatch):
+        page = '<a href="/m.php?download=76391bba">Download</a>'
+        src = self._resolver(monkeypatch, page, FakeResp(
+            status_code=302, headers={"Location": self.SIGNED}))
+        rec = Recording(source_id="1", channel="beaststatsofficial",
+                        rec_date="2026-11-04")
+        url = src.resolve_fresh_url(rec)
+        assert url == self.SIGNED + "&dl=1"
+
+    def test_resolve_via_json_body(self, monkeypatch):
+        page = '<button onclick="fetch(\'/m.php?download=99\')">DL</button>'
+        body = '{"ok":true,"url":"' + self.SIGNED.replace("iv=A&enc=B", "iv=C&enc=D") + '"}'
+        src = self._resolver(monkeypatch, page, FakeResp(text=body))
+        rec = Recording(source_id="2", channel="beaststatsofficial",
+                        rec_date="2026-11-04")
+        url = src.resolve_fresh_url(rec)
+        assert "/ddl/" in url and "iv=C" in url and url.endswith("&dl=1")
+
+    def test_resolve_prefers_matching_date(self, monkeypatch):
+        other = self.SIGNED.replace("2026-11-04", "2026-11-05")
+        page = f'<a href="{other}">one</a><a href="{self.SIGNED}">two</a>'
+        cfg = Config(streamers=["beaststatsofficial"],
+                     streamrecorder_cookie="c=1")
+        src = StreamRecorderSource(cfg)
+        monkeypatch.setattr(src.session, "get",
+                            lambda url, timeout=None, **kw: FakeResp(text=page))
+        rec = Recording(source_id="3", channel="beaststatsofficial",
+                        rec_date="2026-11-04")
+        url = src.resolve_fresh_url(rec)
+        assert "2026-11-04" in url
+
+    def test_resolve_returns_none_when_nothing_found(self, monkeypatch):
+        src = self._resolver(monkeypatch, "<html>empty</html>",
+                             FakeResp(text="nope"))
+        rec = Recording(source_id="4", channel="beaststatsofficial",
+                        rec_date="2026-11-04")
+        assert src.resolve_fresh_url(rec) is None
+
+    def test_dashboard_page_is_scanned_when_configured(self, monkeypatch):
+        seen = []
+        cfg = Config(streamers=["beaststatsofficial"],
+                     streamrecorder_cookie="c=1",
+                     sr_dashboard_url="https://streamrecorder.io/dashboard/recordings")
+        src = StreamRecorderSource(cfg)
+
+        def fake_get(url, timeout=None, **kw):
+            seen.append(url)
+            if "/ddl/" in url:
+                return FakeResp(text="")
+            return FakeResp(text="no links here")
+
+        monkeypatch.setattr(src.session, "get", fake_get)
+        rec = Recording(source_id="5", channel="beaststatsofficial",
+                        rec_date="2026-11-04")
+        assert src.resolve_fresh_url(rec) is None
+        assert any("dashboard/recordings" in u for u in seen)
 
     def test_diagnose(self, monkeypatch):
         src = make_source(monkeypatch)

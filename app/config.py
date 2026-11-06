@@ -49,6 +49,9 @@ class Config:
     discord_webhook_url: str = ""
     streamrecorder_cookie: str = ""  # optional: free-account cookie for full downloads
     sr_base: str = "https://streamrecorder.io"
+    # optional: your logged-in RECORDINGS page (helps the bot find fresh
+    # download links exactly where your browser finds them)
+    sr_dashboard_url: str = ""
     savedly_base: str = "https://savedly.net"
     user_agent: str = (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -96,6 +99,7 @@ def load_config() -> Config:
         contact=_env_str("CONTACT", "@bobmasterbillie"),
         discord_webhook_url=_env_str("DISCORD_WEBHOOK_URL", ""),
         streamrecorder_cookie=_env_str("STREAMRECORDER_COOKIE", ""),
+        sr_dashboard_url=_env_str("SR_DASHBOARD_URL", ""),
         sr_base=_env_str("SR_BASE", "https://streamrecorder.io").rstrip("/"),
         savedly_base=_env_str("SAVEDLY_BASE", "https://savedly.net").rstrip("/"),
         state_path=_env_str("STATE_PATH", "state/state.json"),

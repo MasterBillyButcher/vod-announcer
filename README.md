@@ -102,7 +102,8 @@ Everything is environment-driven; only `DISCORD_WEBHOOK_URL` is required.
 | `WAIT_MINUTES` | `60` | session wait timer (minutes) |
 | `BACKLOG_DAYS` | `7` | how far back to discover recordings |
 | `CONTACT` | `@bobmasterbillie` | contact line in announcements |
-| `STREAMRECORDER_COOKIE` | *(empty)* | optional session cookie for full downloads |
+| `STREAMRECORDER_COOKIE` | *(empty)* | optional session cookie for full downloads (also accepted as `SR_SESSION_COOKIE`) |
+| `SR_DASHBOARD_URL` | *(empty)* | optional: URL of your logged-in RECORDINGS page — helps the bot find fresh download links where your browser finds them |
 
 ## Security
 

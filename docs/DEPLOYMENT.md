@@ -106,6 +106,9 @@ This is the "inbox" where the VOD announcements will be posted.
 | `BACKLOG_DAYS` | `7` | no (already the default) |
 | `CONTACT` | `@bobmasterbillie` | no (already the default) |
 | `STREAMRECORDER_COOKIE` | cookie string, see Step 8 | recommended for FULL downloads |
+| `SR_SESSION_COOKIE` | *(not needed anymore — the workflow now accepts this name as an alias for `STREAMRECORDER_COOKIE`, so if you already created it, just leave it)* | optional alias |
+| `SR_DASHBOARD_URL` | URL of your logged-in RECORDINGS page, e.g. `https://streamrecorder.io/dashboard/recordings` (see Step 8f) | optional, try if downloads stay capped |
+| `SR_DOWNLOAD_URL_TEMPLATE` | **not used by the app** — safe to delete it | not used |
 
 You only truly need the first one. The others already have correct defaults.
 
@@ -155,25 +158,102 @@ GitHub now runs the pipeline every ~15 minutes, forever:
 ## Step 8 — Full-length downloads (recommended, 5 minutes)
 
 Anonymous downloads are **preview-capped (~200 MB)** by streamrecorder.io.
-To unlock full recordings:
+To unlock full recordings you give the bot your logged-in session.
 
-1. Create a free account at <https://streamrecorder.io> (Sign up) and log in.
-2. In your browser press **F12** → **Application** tab (Chrome/Edge) or
-   **Storage** (Firefox) → **Cookies** → `https://streamrecorder.io`.
-3. Select **all** cookie rows. You need a copy-paste string of them:
-   press **F12 → Console**, paste this, press Enter, and copy the output:
+### 8a. Which cookies you need (only TWO)
+
+When you open **F12 → Application → Cookies → `https://streamrecorder.io`**
+you'll see several rows. Here is what each one is:
+
+| Cookie | What it is | Needed? |
+|---|---|---|
+| `Authorization` | your login token | ✅ **YES** |
+| `bkndsrv` | which backend server to talk to | ✅ **YES** |
+| `_pk_id.1.6f93` | analytics (visitor id) | ❌ ignore |
+| `_pk_ses.1.6f93` | analytics (session tracker) | ❌ ignore |
+| `sr_player_theater` | video player "theater mode" preference | ❌ ignore |
+| `srp2_panel` | website panel open/closed state | ❌ ignore |
+| `srp2_tour` | "have you seen the intro tour" flag | ❌ ignore |
+
+So the secret only needs this format (one line, joined with `; `):
+
+```
+Authorization=VALUE_FROM_BROWSER; bkndsrv=VALUE_FROM_BROWSER
+```
+
+### 8b. Build the cookie string
+
+1. Stay logged in at streamrecorder.io, press **F12 → Console**, paste this,
+   press Enter — it builds the string and copies it to your clipboard:
+
    ```js
-   document.cookie
+   (function () {
+     var names = ["Authorization", "bkndsrv"], pairs = [], missing = [];
+     names.forEach(function (n) {
+       var f = document.cookie.split("; ").find(function (c) { return c.startsWith(n + "="); });
+       f ? pairs.push(f) : missing.push(n);
+     });
+     var header = pairs.join("; ");
+     console.log("--- COPY THE LINE BELOW INTO THE SECRET ---");
+     console.log(header || "(empty)");
+     console.log("--- END ---");
+     if (missing.length) console.log(
+       "WARNING: " + missing.join(", ") +
+       " is HttpOnly (console can't read it). Copy it MANUALLY: F12 → Application → " +
+       "Cookies → click the row → copy the Value column. Final format:\n" +
+       "Authorization=PASTE_HERE; bkndsrv=PASTE_HERE", "color:#f80;font-weight:bold");
+     try { copy(header); console.log("✅ also copied to your clipboard"); } catch (e) {}
+   })();
    ```
-4. On GitHub: **Settings → Secrets and variables → Actions → New repository
-   secret**
-   - **Name:** `STREAMRECORDER_COOKIE`
-   - **Secret:** *(the copied cookie string)*
-5. Re-run the workflow once (Step 6). Blocked parts now become full
-   downloads. Every announcement then shows `Date / Duration / Parts / Links`.
 
-If downloads still look capped, use the F12 capture in Step 9 and send me the
-output — I'll adapt the downloader.
+2. If you see the orange **WARNING** (the `Authorization` cookie is usually
+   hidden from the console for security), build the line by hand:
+   click each cookie row in **Application → Cookies**, copy its **Value**
+   column, and type the line yourself:
+   `Authorization=PASTE_VALUE1; bkndsrv=PASTE_VALUE2`
+
+### 8c. Put it in GitHub (same place as the webhook)
+
+1. Repo → **Settings → Secrets and variables → Actions → New repository secret**
+2. **Name:** `STREAMRECORDER_COOKIE` (the workflow also accepts the name
+   `SR_SESSION_COOKIE` — if you already created that one, you don't need to
+   change anything)
+3. **Secret:** *(the cookie line from 8b)*
+4. **Add secret** → re-run the workflow (Step 6).
+
+### 8d. How you know it worked
+
+In the run log look for:
+
+- `streamrecorder: using provided session cookie (value hidden)` ✅
+- `streamrecorder: found a fresh /ddl/ url …` ✅ (the bot re-requests a
+  fresh signed link for every download, exactly like your browser does —
+  the links change on purpose each time, they are signed tokens that expire)
+
+If instead you see `no full-download URL found … falling back to preview`,
+do Step 9 (F12 capture) and — while it runs — click **Download** on an **old**
+recording, then send me the `[VODCAPTURE]` output.
+
+### 8e. Cookie expiry (important)
+
+Look at the **Expires / Max-Age** column for `Authorization` in the cookies
+table and remember it. If the cookie ever expires (weeks/months), runs simply
+fall back to capped previews — nothing breaks. Fix = log in again, redo 8b/8c
+with the fresh value. Tell me the expiry you see and I'll tell you if it's a
+"session" type that dies too fast.
+
+### 8f. If downloads stay capped: give the bot your RECORDINGS page URL
+
+The Download button lives on your logged-in dashboard. The bot already tries
+the public channel page; you can also point it at the exact page you use:
+
+1. Log in at streamrecorder.io → left sidebar → **RECORDINGS** → copy the URL
+   from the address bar (looks like `https://streamrecorder.io/dashboard/…`).
+2. Repo → **Settings → Secrets and variables → Actions → New repository secret**
+   - **Name:** `SR_DASHBOARD_URL`
+   - **Secret:** *(the copied URL)*
+3. Re-run. The bot fetches that page with your cookie and clicks the same
+   `m.php?download=…` gateway your browser uses to get a fresh signed link.
 
 ---
 
@@ -186,7 +266,8 @@ layouts change over time), capture what the sites actually do:
 2. Paste the whole content of **`scripts/f12_capture.js`** (from the project
    folder) and press Enter. It prints: *"running! Now do ONE manual action…"*
 3. Do ONE manual action:
-   - streamrecorder.io: click **Download** on a recording, or
+   - streamrecorder.io: go to your **RECORDINGS** page and click **Download**
+     on one recording (the download must actually start), or
    - savedly.net: upload any small file.
 4. Copy every green **[VODCAPTURE]** line from the console and send it to me.
 5. I patch the app to match the site's current behavior — you only re-upload
@@ -203,6 +284,7 @@ layouts change over time), capture what the sites actually do:
 | `streamrecorder: 0 recordings` | Page layout changed or channel renamed | Run Step 9 and send me the output |
 | `savedly: 429 rate limited` | Upload speed limit hit | Nothing to do — it auto-retries next run |
 | Old links died | savedly deletes files with **no views for 7 days** | Expected; open links soon. The app always posts fresh links for new VODs |
+| Downloads shrank back to ~200 MB previews | `STREAMRECORDER_COOKIE` expired | Log in at streamrecorder.io again → redo Step 8b + 8c (2 minutes) |
 | Runs stopped after ~60 days | GitHub disables idle schedules | Open Actions → Run workflow once manually |
 | I changed `state/state.json` by hand | …don't 🙂 | The bot commits it back every run |
 

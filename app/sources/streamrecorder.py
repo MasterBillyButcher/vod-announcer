@@ -30,6 +30,8 @@ import re
 
 import requests
 
+from urllib.parse import unquote
+
 from app.config import Config
 from app.logsetup import get_logger
 from app.models import Recording
@@ -50,6 +52,26 @@ _LATEST_TITLE_RE = re.compile(r"data_title\s*=\s*'([^']*)'")
 _LATEST_SOURCES_RE = re.compile(r"const data_sources = (\[.*?\]);", re.S)
 _TEASER_DUR_RE = re.compile(r'class="alt-teaser-duration">([^<]+)<')
 _TEASER_DATE_RE = re.compile(r"alt-teaser-meta\">.*?&middot;\s*([A-Za-z]{3} \d{2}, \d{4})", re.S)
+
+# download-gateway links used by the site's Download button (seen as
+# `m.php?download=...` in the browser network panel)
+_MPHP_RE = re.compile(r'["\']([^"\']*?m\.php\?download=[^"\']*)["\']', re.I)
+
+
+def _ensure_dl1(url: str) -> str:
+    """The site forces the save dialog with a dl=1 query param - keep it."""
+    if "dl=1" in url:
+        return url
+    return url + ("&" if "?" in url else "?") + "dl=1"
+
+
+def _recording_in_url(url: str, rec: Recording) -> bool:
+    """Signed file URLs embed twitch_<channel>_<YYYY-MM-DD HH-MM-SS>_..."""
+    try:
+        path = unquote(url)
+    except Exception:  # noqa: BLE001 - decoding oddities must never crash us
+        return False
+    return f"twitch_{rec.channel}_{rec.rec_date}" in path
 
 
 class NoDownloadURLError(RuntimeError):
@@ -177,6 +199,8 @@ class StreamRecorderSource:
         """Return (url, mode) for a recording.
 
         mode is `preview` (anonymous, size-capped) or `full` (cookie-based).
+        Full links are SIGNED and differ on every request, so a fresh one
+        is resolved at download time (see resolve_fresh_url).
         """
         if self.cfg.streamrecorder_cookie:
             url = self._full_download_url(rec)
@@ -192,21 +216,84 @@ class StreamRecorderSource:
         )
 
     def _full_download_url(self, rec: Recording) -> str | None:
-        """Look for a full (`/ddl/`) signed URL on pages visible to the
-        logged-in session.  Best-effort: the site is JS-heavy, so this
-        scans for srcdn signed mp4 URLs and prefers /ddl/ over /ddlprev/."""
+        """Fresh full (`/ddl/`) URL for the logged-in session."""
+        return self.resolve_fresh_url(rec)
+
+    # ------------------------------------------------- fresh link resolver
+    def _gateway_pages(self, channel: str) -> list[str]:
+        pages = [f"{self.cfg.sr_base}/twitch/{channel}"]
+        if self.cfg.sr_dashboard_url:
+            pages.append(self.cfg.sr_dashboard_url)
+        return pages
+
+    def resolve_fresh_url(self, rec: Recording) -> str | None:
+        """Get a FRESH signed download URL, mimicking the browser's flow.
+
+        Full-download links on srcdn.net are signed (`iv=` + `enc=` query
+        params) and DIFFER ON EVERY REQUEST - that is by design (they are
+        per-request tokens, not stable links; they also expire).  So we
+        never cache them: at download time we (1) scan the pages our
+        session can see for a ready signed /ddl/ URL of this recording,
+        or (2) hit the site's download-gateway links (`m.php?download=...`,
+        exactly what the Download button calls) and read the fresh signed
+        URL from the redirect target or the response body.
+        """
+        mphp_links: list[str] = []
+        for page in self._gateway_pages(rec.channel):
+            try:
+                html = self._get(page)
+            except requests.RequestException as exc:
+                log.warning("streamrecorder: gateway page %s failed: %s", page, exc)
+                continue
+
+            full = [u for u in _signed_urls(html) if "/ddl/" in u]
+            if len(full) == 1:
+                log.info("streamrecorder: found a fresh /ddl/ url on %s", page)
+                return _ensure_dl1(full[0])
+            matching = [u for u in full if _recording_in_url(u, rec)]
+            if matching:
+                log.info("streamrecorder: found a fresh /ddl/ url matching %s on %s",
+                         rec.rec_date, page)
+                return _ensure_dl1(matching[0])
+
+            for link in _MPHP_RE.findall(html):
+                url = link.replace("&amp;", "&")
+                if url.startswith("/"):
+                    url = self.cfg.sr_base + url
+                elif not url.startswith("http"):
+                    url = f"{self.cfg.sr_base}/{url}"
+                if url not in mphp_links:
+                    mphp_links.append(url)
+
+        for link in mphp_links[:5]:  # be polite to the site
+            fresh = self._request_mphp(link)
+            if fresh:
+                return fresh
+        return None
+
+    def _request_mphp(self, url: str) -> str | None:
+        """Hit one download-gateway link and extract the fresh signed URL
+        from either the redirect target or the response body (JSON/text)."""
+        shown = url if len(url) <= 120 else url[:120] + "..."
         try:
-            html = self.fetch_channel_page(rec.channel)
+            resp = self.session.get(url, timeout=self.cfg.http_timeout,
+                                    allow_redirects=False)
         except requests.RequestException as exc:
-            log.warning("streamrecorder: page fetch failed: %s", exc)
+            log.warning("streamrecorder: gateway %s failed: %s", shown, exc)
             return None
-        full = [u for u in _signed_urls(html) if "/ddl/" in u]
-        preview = [u for u in _signed_urls(html) if "/ddlprev/" in u]
-        if full:
-            log.info("streamrecorder: found %d full download URL(s)", len(full))
-            return full[0]
-        if preview:
-            return preview[0]
+        if 300 <= resp.status_code < 400:
+            loc = resp.headers.get("Location", "")
+            if "srcdn.net" in loc:
+                log.info("streamrecorder: gateway redirected to a fresh signed url")
+                return _ensure_dl1(loc)
+        body = getattr(resp, "text", "") or ""
+        if body:
+            m = re.search(r'https://[a-z0-9.-]*srcdn\.net/ddl/[^"\'\s\\]+', body)
+            if m:
+                log.info("streamrecorder: gateway returned a fresh signed url in the body")
+                return _ensure_dl1(m.group(0).replace("\\u0026", "&"))
+        log.warning("streamrecorder: gateway %s -> HTTP %s, no signed url inside",
+                    shown, resp.status_code)
         return None
 
     # ------------------------------------------------------------ diagnose
