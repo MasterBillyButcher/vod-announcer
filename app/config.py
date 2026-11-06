@@ -8,6 +8,7 @@ GitHub repository secrets (or a local .env when running locally).
 from __future__ import annotations
 
 import os
+import re
 from dataclasses import dataclass, field
 
 
@@ -42,7 +43,7 @@ class Config:
 
     # --- business rules (defaults fixed by the project spec) -------------
     wait_minutes: int = 60          # session wait timer (minutes)
-    backlog_days: int = 7           # how far back to look on first discovery
+    backlog_days: int = 2           # today + yesterday ONLY - never announce older
     contact: str = "@bobmasterbillie"
 
     # --- credentials / endpoints ----------------------------------------
@@ -85,6 +86,11 @@ class Config:
             ("https://discord.com/api/webhooks/", "https://discordapp.com/api/webhooks/")
         ):
             problems.append("DISCORD_WEBHOOK_URL does not look like a Discord webhook URL")
+        if self.streamrecorder_cookie and "=" not in self.streamrecorder_cookie:
+            problems.append(
+                "STREAMRECORDER_COOKIE does not look like "
+                "'Authorization=...; bkndsrv=...' - see docs/DEPLOYMENT.md Step 8"
+            )
         return problems
 
 
@@ -92,13 +98,18 @@ def load_config() -> Config:
     streamers_raw = _env_str("STREAMERS", "beaststatsofficial")
     streamers = [s.strip().lstrip("@") for s in streamers_raw.split(",") if s.strip()]
 
+    # Secrets are easy to paste with a stray newline at the end; a newline
+    # inside a cookie header breaks the HTTP layer with a confusing crash,
+    # so strip control characters defensively.
+    raw_cookie = re.sub(r"[\r\n\t]+", "", _env_str("STREAMRECORDER_COOKIE", "")).strip()
+
     return Config(
         streamers=streamers,
         wait_minutes=_env_int("WAIT_MINUTES", 60),
-        backlog_days=_env_int("BACKLOG_DAYS", 7),
+        backlog_days=_env_int("BACKLOG_DAYS", 2),
         contact=_env_str("CONTACT", "@bobmasterbillie"),
         discord_webhook_url=_env_str("DISCORD_WEBHOOK_URL", ""),
-        streamrecorder_cookie=_env_str("STREAMRECORDER_COOKIE", ""),
+        streamrecorder_cookie=raw_cookie,
         sr_dashboard_url=_env_str("SR_DASHBOARD_URL", ""),
         sr_base=_env_str("SR_BASE", "https://streamrecorder.io").rstrip("/"),
         savedly_base=_env_str("SAVEDLY_BASE", "https://savedly.net").rstrip("/"),

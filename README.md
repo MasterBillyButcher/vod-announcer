@@ -100,7 +100,7 @@ Everything is environment-driven; only `DISCORD_WEBHOOK_URL` is required.
 | `DISCORD_WEBHOOK_URL` | *(required)* | Discord webhook that receives announcements |
 | `STREAMERS` | `beaststatsofficial` | comma-separated channel list |
 | `WAIT_MINUTES` | `60` | session wait timer (minutes) |
-| `BACKLOG_DAYS` | `7` | how far back to discover recordings |
+| `BACKLOG_DAYS` | `2` | how far back to look: `2` = **today + yesterday only**, never older |
 | `CONTACT` | `@bobmasterbillie` | contact line in announcements |
 | `STREAMRECORDER_COOKIE` | *(empty)* | optional session cookie for full downloads (also accepted as `SR_SESSION_COOKIE`) |
 | `SR_DASHBOARD_URL` | *(empty)* | optional: URL of your logged-in RECORDINGS page — helps the bot find fresh download links where your browser finds them |
@@ -120,8 +120,9 @@ Everything is environment-driven; only `DISCORD_WEBHOOK_URL` is required.
   account). How much a free account unlocks is visible in the logs after the
   first runs; `scripts/f12_capture.js` documents how to capture the exact
   logged-in download flow if the endpoints ever change.
-- streamrecorder.io free plan stores recordings ~5 days; `BACKLOG_DAYS=7`
-  therefore covers everything the source still exposes.
+- streamrecorder.io free plan stores recordings ~5 days; the default
+  `BACKLOG_DAYS=2` (today + yesterday) always covers everything the user
+  asked to announce — recent streams only, never old ones.
 - savedly.net deletes files after 7 days without views (stated in every
   announcement).
 - GitHub scheduled workflows can be delayed by a few minutes at busy times

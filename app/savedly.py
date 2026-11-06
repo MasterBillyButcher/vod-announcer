@@ -67,7 +67,15 @@ class SavedlyClient:
     def upload_file_chunked(self, path: str, display_name: str) -> dict:
         return self._chunked_upload(path, display_name)
 
-    # ------------------------------------------------------------ internals
+    # ----------------------------------------------------------- internals
+    @staticmethod
+    def _retry_after(resp: requests.Response, default: int = 30) -> int:
+        """Parse Retry-After defensively - some CDNs send a date string."""
+        try:
+            return max(1, int(resp.headers.get("Retry-After", default)))
+        except (TypeError, ValueError):
+            return default
+
     def _direct_upload(self, path: str, display_name: str) -> dict:
         size = os.path.getsize(path)
         log.info("savedly: direct upload %s (%.1f MiB)", display_name, size / 1024 / 1024)
@@ -79,7 +87,7 @@ class SavedlyClient:
                 timeout=max(self.http_timeout, 900),
             )
         if resp.status_code == 429:
-            retry_after = int(resp.headers.get("Retry-After", "30"))
+            retry_after = self._retry_after(resp)
             raise UploadError(f"rate limited (429), retry after {retry_after}s")
         if resp.status_code >= 400:
             raise UploadError(f"direct upload HTTP {resp.status_code}: {resp.text[:200]}")
@@ -146,7 +154,7 @@ class SavedlyClient:
             try:
                 resp = self.session.put(url, data=chunk, timeout=max(self.http_timeout, 600))
                 if resp.status_code == 429:
-                    retry_after = int(resp.headers.get("Retry-After", "30"))
+                    retry_after = self._retry_after(resp)
                     log.warning("savedly: 429 on part %d, sleeping %ss", number, retry_after)
                     time.sleep(retry_after)
                     continue

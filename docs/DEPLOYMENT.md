@@ -103,7 +103,7 @@ This is the "inbox" where the VOD announcements will be posted.
 | `DISCORD_WEBHOOK_URL` | your webhook URL | **YES** |
 | `STREAMERS` | `beaststatsofficial` | no (already the default) |
 | `WAIT_MINUTES` | `60` | no (already the default) |
-| `BACKLOG_DAYS` | `7` | no (already the default) |
+| `BACKLOG_DAYS` | `2` | no (already the default: today + yesterday only) |
 | `CONTACT` | `@bobmasterbillie` | no (already the default) |
 | `STREAMRECORDER_COOKIE` | cookie string, see Step 8 | recommended for FULL downloads |
 | `SR_SESSION_COOKIE` | *(not needed anymore — the workflow now accepts this name as an alias for `STREAMRECORDER_COOKIE`, so if you already created it, just leave it)* | optional alias |
@@ -132,16 +132,16 @@ You only truly need the first one. The others already have correct defaults.
 3. Click **Run workflow**.
 4. Click the new run in the list → **run** job → watch the live log.
 5. What you want to see in the log:
-   - `streamrecorder: 7 recordings in backlog window`
+   - `streamrecorder: 2 recordings in backlog window` (today + yesterday)
    - `NEW recording …` lines (first run only)
    - `downloaded …` → `renamed -> BS_…` → `savedly: uploaded -> https://savedly.net/f/…`
    - `session … ANNOUNCED with N part link(s)`
 6. Check your Discord channel — the announcement should be there 🎉
 
-Note: on the first real run the newest day's session waits ~60 minutes
-(the anti-split timer) before announcing. Older days announce immediately.
-Older-than-newest recordings may be reported as *blocked* until you do
-Step 8 (they have no public download URL without a session cookie).
+Note: only **today's and yesterday's** recordings are ever announced — older
+ones are ignored completely. On the first real run the newest day's session
+waits ~60 minutes (the anti-split timer) before announcing; the older day
+(yesterday) announces immediately because a newer day exists.
 
 ---
 
@@ -285,6 +285,7 @@ layouts change over time), capture what the sites actually do:
 | `savedly: 429 rate limited` | Upload speed limit hit | Nothing to do — it auto-retries next run |
 | Old links died | savedly deletes files with **no views for 7 days** | Expected; open links soon. The app always posts fresh links for new VODs |
 | Downloads shrank back to ~200 MB previews | `STREAMRECORDER_COOKIE` expired | Log in at streamrecorder.io again → redo Step 8b + 8c (2 minutes) |
+| Run shows `Process completed with exit code 1` | Unexpected crash — often a cookie pasted with a line break, or a site change | Open the failed run → click **run** → click the red **Run VOD Announcer** step → copy the **last ~20 lines** and send them. Also re-do Step 8b so the cookie is ONE line |
 | Runs stopped after ~60 days | GitHub disables idle schedules | Open Actions → Run workflow once manually |
 | I changed `state/state.json` by hand | …don't 🙂 | The bot commits it back every run |
 

@@ -14,6 +14,7 @@ has expired and all parts are uploaded (or permanently failed).
 
 from __future__ import annotations
 
+import json
 import os
 import shutil
 import sys
@@ -118,7 +119,7 @@ def run(cfg: Config) -> int:
     if cfg.diagnose:
         for channel in cfg.streamers:
             report = source.diagnose(channel)
-            log.info("DIAGNOSE %s", report)
+            log.info("DIAGNOSE %s", json.dumps(report))
         state.save()
         return 0
 
@@ -133,7 +134,11 @@ def run(cfg: Config) -> int:
         for rec in recordings:
             if state.is_new(rec.source_id):
                 state.add_recording(rec)
-                sessions.register(rec)
+                try:
+                    sessions.register(rec)
+                except Exception as exc:  # noqa: BLE001 - one bad record must not kill the run
+                    log.error("could not register recording %s: %s", rec.source_id, exc)
+                    continue
                 new_count += 1
                 log.info("NEW recording %s | %s | %s | %s",
                          rec.source_id, rec.rec_date, rec.title, format_duration(rec.duration_seconds))
@@ -152,7 +157,11 @@ def run(cfg: Config) -> int:
         return 0
 
     # ------------------------------------------- announcement processing
-    due = sessions.due_sessions()
+    try:
+        due = sessions.due_sessions()
+    except Exception as exc:  # noqa: BLE001 - never let a state quirk kill the run
+        log.error("could not compute due sessions: %s", exc)
+        due = []
     announced = 0
 
     def _given_up(rec: Recording) -> bool:
@@ -214,6 +223,12 @@ def run(cfg: Config) -> int:
                     pending += 1
                     log.warning("recording %s attempt %d failed (will retry next run): %s",
                                 rec.source_id, rec.attempts, exc)
+            except Exception as exc:  # noqa: BLE001 - unexpected bug: log, keep state, retry next run
+                rec.last_error = f"{type(exc).__name__}: {exc}"[:300]
+                state.update_recording(rec)
+                pending += 1
+                log.error("recording %s unexpected error (will retry next run): %s",
+                          rec.source_id, rec.last_error)
             state.save()
 
         if not ok_parts:
@@ -233,15 +248,15 @@ def run(cfg: Config) -> int:
         base_title = ok_parts[0]["filename"]
         if len(ok_parts) > 1 and "_P" in base_title:
             base_title = base_title.rsplit("_P", 1)[0]
-        messages = build_announcement(
-            channel=session.channel,
-            rec_date=session.rec_date,
-            title=base_title or (recordings[0].title or session.rec_date),
-            parts=ok_parts,
-            contact=cfg.contact,
-            warnings=warnings,
-        )
         try:
+            messages = build_announcement(
+                channel=session.channel,
+                rec_date=session.rec_date,
+                title=base_title or (recordings[0].title or session.rec_date),
+                parts=ok_parts,
+                contact=cfg.contact,
+                warnings=warnings,
+            )
             message_url = send(cfg.discord_webhook_url, messages)
             sessions.mark_announced(session, message_url)
             announced += 1
