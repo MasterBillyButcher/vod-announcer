@@ -102,7 +102,7 @@ Everything is environment-driven; only `DISCORD_WEBHOOK_URL` is required.
 | `WAIT_MINUTES` | `60` | session wait timer (minutes) |
 | `BACKLOG_DAYS` | `2` | how far back to look: `2` = **today + yesterday only**, never older |
 | `CONTACT` | `@bobmasterbillie` | contact line in announcements |
-| `STREAMRECORDER_COOKIE` | *(empty)* | optional session cookie for full downloads (also accepted as `SR_SESSION_COOKIE`) |
+| `STREAMRECORDER_COOKIE` | *(empty)* | optional session cookie for full downloads (also accepted as `SR_SESSION_COOKIE`). Any paste style works: just the token value, `Authorization=…` alone, or the full `Authorization=…; bkndsrv=…` line |
 | `SR_DASHBOARD_URL` | *(empty)* | optional: URL of your logged-in RECORDINGS page — helps the bot find fresh download links where your browser finds them |
 
 ## Security

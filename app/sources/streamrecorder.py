@@ -93,7 +93,12 @@ class StreamRecorderSource:
         })
         if cfg.streamrecorder_cookie:
             self.session.headers["Cookie"] = cfg.streamrecorder_cookie
-            log.info("streamrecorder: using provided session cookie (value hidden)")
+            if "authorization=" in cfg.streamrecorder_cookie.lower():
+                log.info("streamrecorder: session cookie active "
+                         "(Authorization login token detected, value hidden)")
+            else:
+                log.warning("streamrecorder: session cookie is set but contains "
+                            "no Authorization token - full downloads may stay capped")
 
     # ------------------------------------------------------------ fetching
     def _get(self, url: str) -> str:

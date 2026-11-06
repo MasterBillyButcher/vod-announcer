@@ -36,6 +36,56 @@ def _env_bool(name: str, default: bool = False) -> bool:
     return raw in ("1", "true", "yes", "on")
 
 
+# Cookie names the streamrecorder.io site itself sets (verified from a real
+# logged-in browser).  Used to tell "a bare token paste" apart from "a paste
+# of some other cookie".
+_KNOWN_COOKIE_NAMES = {
+    "authorization",
+    "bkndsrv",
+    "sr_player_theater",
+    "srp2_panel",
+    "srp2_tour",
+}
+
+
+def _normalize_cookie(raw: str) -> str:
+    """Turn any reasonable paste of the session cookie into a Cookie header.
+
+    Accepted forms (each covered by a test):
+
+    * ``PASTE_THE_TOKEN_VALUE_ALONE``       -> wrapped as Authorization=...
+      (the most common paste; base64 padding containing '=' works too)
+    * ``Bearer eyJ...``                     -> same, prefix kept exactly
+    * ``Authorization=...``                 -> fine on its own (bkndsrv optional)
+    * ``Authorization=A; bkndsrv=B``        -> the documented full form
+    * the whole 7-cookie line from devtools -> extra cookies are harmless
+    """
+    value = re.sub(r"[\r\n\t]+", "", raw).strip()
+    if not value:
+        return ""
+    pairs = [p.strip() for p in value.split(";") if p.strip()]
+    names = [p.split("=", 1)[0].strip().lower() for p in pairs]
+
+    if "authorization" in names:
+        fixed = []
+        for p in pairs:
+            if "=" in p:
+                name, _, val = p.partition("=")
+                fixed.append(f"{name.strip()}={val.strip()}")
+            else:
+                fixed.append(p)
+        return "; ".join(fixed)
+
+    # No Authorization pair anywhere.  A single chunk that is not one of the
+    # site's own cookie names is almost certainly the bare VALUE of the
+    # Authorization cookie - wrap it (a 'Bearer ' prefix and internal spaces
+    # are kept exactly as the browser stores them).
+    if len(pairs) == 1 and names[0] not in _KNOWN_COOKIE_NAMES:
+        return f"Authorization={value}"
+
+    return "; ".join(pairs)
+
+
 @dataclass
 class Config:
     # --- what to monitor -------------------------------------------------
@@ -86,11 +136,10 @@ class Config:
             ("https://discord.com/api/webhooks/", "https://discordapp.com/api/webhooks/")
         ):
             problems.append("DISCORD_WEBHOOK_URL does not look like a Discord webhook URL")
-        if self.streamrecorder_cookie and "=" not in self.streamrecorder_cookie:
-            problems.append(
-                "STREAMRECORDER_COOKIE does not look like "
-                "'Authorization=...; bkndsrv=...' - see docs/DEPLOYMENT.md Step 8"
-            )
+        # NOTE: STREAMRECORDER_COOKIE problems are deliberately NOT fatal
+        # (never exit code 2).  Any reasonable paste is normalized in
+        # _normalize_cookie(); a broken cookie just means the bot falls
+        # back to capped preview downloads and logs a warning.
         return problems
 
 
@@ -98,10 +147,10 @@ def load_config() -> Config:
     streamers_raw = _env_str("STREAMERS", "beaststatsofficial")
     streamers = [s.strip().lstrip("@") for s in streamers_raw.split(",") if s.strip()]
 
-    # Secrets are easy to paste with a stray newline at the end; a newline
-    # inside a cookie header breaks the HTTP layer with a confusing crash,
-    # so strip control characters defensively.
-    raw_cookie = re.sub(r"[\r\n\t]+", "", _env_str("STREAMRECORDER_COOKIE", "")).strip()
+    # Secrets are easy to paste wrong (stray newlines, only the token value,
+    # with/without the 'Authorization=' name, the whole devtools line ...).
+    # _normalize_cookie() cleans all of that up into one usable header.
+    raw_cookie = _normalize_cookie(_env_str("STREAMRECORDER_COOKIE", ""))
 
     return Config(
         streamers=streamers,

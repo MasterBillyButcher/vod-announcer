@@ -181,6 +181,16 @@ So the secret only needs this format (one line, joined with `; `):
 Authorization=VALUE_FROM_BROWSER; bkndsrv=VALUE_FROM_BROWSER
 ```
 
+> **In a hurry?** The bot is forgiving about the format. Any of these also
+> works — it auto-detects what you pasted:
+> - **only the Authorization value** (e.g. `Bearer eyJ…`), no name needed
+> - `Authorization=VALUE` alone (bkndsrv optional)
+> - the whole cookie line copied from the devtools table (extra cookies are
+>   ignored)
+>
+> A wrong cookie can never crash the run — it only means capped preview
+> downloads and a clear warning in the log.
+
 ### 8b. Build the cookie string
 
 1. Stay logged in at streamrecorder.io, press **F12 → Console**, paste this,
@@ -225,7 +235,9 @@ Authorization=VALUE_FROM_BROWSER; bkndsrv=VALUE_FROM_BROWSER
 
 In the run log look for:
 
-- `streamrecorder: using provided session cookie (value hidden)` ✅
+- `streamrecorder: session cookie active (Authorization login token detected, value hidden)` ✅
+  (if you instead see `contains no Authorization token`, the paste lost the
+  token itself — redo 8b)
 - `streamrecorder: found a fresh /ddl/ url …` ✅ (the bot re-requests a
   fresh signed link for every download, exactly like your browser does —
   the links change on purpose each time, they are signed tokens that expire)
@@ -237,10 +249,11 @@ recording, then send me the `[VODCAPTURE]` output.
 ### 8e. Cookie expiry (important)
 
 Look at the **Expires / Max-Age** column for `Authorization` in the cookies
-table and remember it. If the cookie ever expires (weeks/months), runs simply
-fall back to capped previews — nothing breaks. Fix = log in again, redo 8b/8c
-with the fresh value. Tell me the expiry you see and I'll tell you if it's a
-"session" type that dies too fast.
+table and remember it. Real-world example: a token issued **2026-11-06**
+expired **2026-12-06** — i.e. 30 days of maintenance-free runs. When it
+ever expires, runs simply fall back to capped previews — nothing breaks.
+Fix = log in again, redo 8b/8c with the fresh value (2 minutes). Set a
+monthly calendar reminder around the expiry date.
 
 ### 8f. If downloads stay capped: give the bot your RECORDINGS page URL
 
@@ -285,7 +298,8 @@ layouts change over time), capture what the sites actually do:
 | `savedly: 429 rate limited` | Upload speed limit hit | Nothing to do — it auto-retries next run |
 | Old links died | savedly deletes files with **no views for 7 days** | Expected; open links soon. The app always posts fresh links for new VODs |
 | Downloads shrank back to ~200 MB previews | `STREAMRECORDER_COOKIE` expired | Log in at streamrecorder.io again → redo Step 8b + 8c (2 minutes) |
-| Run shows `Process completed with exit code 1` | Unexpected crash — often a cookie pasted with a line break, or a site change | Open the failed run → click **run** → click the red **Run VOD Announcer** step → copy the **last ~20 lines** and send them. Also re-do Step 8b so the cookie is ONE line |
+| Run shows `Process completed with exit code 2` | A config problem — the log line right above it says exactly which one (`config problem: …`) | Follow that line; 99% it's the webhook secret (Step 4). The cookie can NO LONGER cause this |
+| Run shows `Process completed with exit code 1` | Unexpected crash — often a site change | Open the failed run → click **run** → click the red **Run VOD Announcer** step → copy the **last ~20 lines** and send them |
 | Runs stopped after ~60 days | GitHub disables idle schedules | Open Actions → Run workflow once manually |
 | I changed `state/state.json` by hand | …don't 🙂 | The bot commits it back every run |
 
