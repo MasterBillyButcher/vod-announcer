@@ -48,7 +48,7 @@ jobs:
         env:
           # REQUIRED - where announcements are posted:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          # Optional overrides (defaults: beaststatsofficial / 60 / 7 / @bobmasterbillie):
+          # Optional overrides (defaults: beaststatsofficial / 60 / 2 / @bobmasterbillie):
           STREAMERS: ${{ secrets.STREAMERS }}
           WAIT_MINUTES: ${{ secrets.WAIT_MINUTES }}
           BACKLOG_DAYS: ${{ secrets.BACKLOG_DAYS }}
