@@ -9,6 +9,7 @@
 
 import json
 import os
+from datetime import timedelta
 
 import pytest
 
@@ -71,6 +72,30 @@ class OldSource:
 
     def get_download_url(self, rec):  # pragma: no cover - must never be reached
         raise AssertionError("skipped sessions must not be processed")
+
+
+class FixedDateSource:
+    """Successful source whose recording date is set per test."""
+
+    rec_date_val = ""
+
+    def __init__(self, cfg):
+        self.cfg = cfg
+
+    def list_recordings(self, channel):
+        return [Recording(
+            source_id="444",
+            channel=channel,
+            title="Grace Stream",
+            rec_date=FixedDateSource.rec_date_val,
+            duration_seconds=10,
+            preview_url="https://signed.example/x.mp4?iv=a&enc=b",
+            page_url="https://example.com",
+            discovered_at=iso(now_utc()),
+        )]
+
+    def get_download_url(self, rec):
+        return rec.preview_url, "preview"
 
 
 class FakeUploader:
@@ -161,3 +186,37 @@ class TestFreshnessWindow:
         assert run(cfg) == 0
         assert FakeUploader.calls == []
         assert mocks == []
+
+
+class TestGraceWindow:
+    def test_skipped_session_is_reopened_within_grace(self, tmp_path, mocks, monkeypatch):
+        """A session retired while downloads were broken must be rescued by
+        the grace window: discovery re-opens it and it announces normally."""
+        from app.state_manager import StateManager
+
+        monkeypatch.setattr(main_module, "StreamRecorderSource", FixedDateSource)
+        FixedDateSource.rec_date_val = (
+            to_tz(now_utc()).date() - timedelta(days=2)).isoformat()  # inside grace
+        cfg = make_cfg(tmp_path)
+
+        # pre-seed state: recording + session exist and were retired earlier
+        state = StateManager(cfg.state_path)
+        rec = Recording(source_id="444", channel="teststreamer", title="Grace Stream",
+                        rec_date=FixedDateSource.rec_date_val, discovered_at=iso(now_utc()))
+        state.add_recording(rec)
+        sess = state.get_session(state.session_key("teststreamer", FixedDateSource.rec_date_val))
+        sess.recording_ids.append("444")
+        sess.last_activity = iso(now_utc())  # wait timer already expired
+        sess.skipped = True
+        sess.skip_reason = "older than the 2-day freshness window"
+        state.update_session(sess)
+        state.save()
+
+        assert run(cfg) == 0
+        data = json.load(open(cfg.state_path, encoding="utf-8"))
+        key = f"teststreamer|{FixedDateSource.rec_date_val}"
+        assert data["sessions"][key]["skipped"] is False
+        assert data["sessions"][key]["skip_reason"] == ""
+        assert data["sessions"][key]["announced"] is True
+        assert len(mocks) == 1
+        assert len(FakeUploader.calls) == 1

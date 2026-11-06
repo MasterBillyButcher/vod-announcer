@@ -35,6 +35,13 @@ from app.timeutil import format_duration, now_utc, to_tz
 
 log = get_logger()
 
+# A session is retired only after it fell this many days PAST the freshness
+# window (BACKLOG_DAYS).  The grace protects sessions that were discovered
+# while fresh but could not download for a while (e.g. blocked until the
+# cookie / SR_DASHBOARD_URL secret was added) - they still complete instead
+# of being abandoned mid-pipeline.
+GRACE_DAYS = 1
+
 
 def _cleanup_workdir(work_dir: str) -> None:
     if os.path.isdir(work_dir):
@@ -124,6 +131,14 @@ def run(cfg: Config) -> int:
         state.save()
         return 0
 
+    # Freshness rule.  Discovery looks BACKLOG_DAYS back (today + yesterday).
+    # A session is announced while it is inside that window; it is RETIRED
+    # only once it falls outside the grace window (one extra day), see
+    # GRACE_DAYS above.
+    today = to_tz(now_utc(), cfg.timezone).date()
+    skip_cutoff = (today - timedelta(
+        days=cfg.backlog_days - 1 + GRACE_DAYS)).isoformat()
+
     # ------------------------------------------------------- discovery
     new_count = 0
     for channel in cfg.streamers:
@@ -150,6 +165,17 @@ def run(cfg: Config) -> int:
                     if rec.preview_url and not existing.preview_url:
                         existing.preview_url = rec.preview_url
                         state.update_recording(existing)
+                    # re-open a session retired earlier while it is still
+                    # inside the grace window (e.g. downloads work again)
+                    skey = state.session_key(rec.channel, rec.rec_date)
+                    if skey in state.data["sessions"]:
+                        sess = state.get_session(skey)
+                        if sess.skipped and sess.rec_date >= skip_cutoff:
+                            sess.skipped = False
+                            sess.skip_reason = ""
+                            state.update_session(sess)
+                            log.info("session %s re-opened (inside the freshness grace window)",
+                                     sess.key)
     log.info("discovery finished: %d new recording(s)", new_count)
 
     if cfg.dry_run:
@@ -165,19 +191,15 @@ def run(cfg: Config) -> int:
         due = []
     announced = 0
 
-    # Freshness rule at announcement level: sessions older than the backlog
-    # window (today + yesterday) are never announced - retire them so they
-    # stop being retried on every run.
-    cutoff = (to_tz(now_utc(), cfg.timezone).date()
-              - timedelta(days=cfg.backlog_days - 1)).isoformat()
-
     def _given_up(rec: Recording) -> bool:
         return rec.attempts >= cfg.max_recording_attempts and not rec.link
 
     for session in due:
-        if session.rec_date < cutoff:
+        if session.rec_date < skip_cutoff:
             sessions.mark_skipped(
-                session, f"older than the {cfg.backlog_days}-day freshness window")
+                session,
+                f"older than the {cfg.backlog_days}-day freshness window "
+                f"(+{GRACE_DAYS}d grace)")
             log.warning("session %s is older than the freshness window - skipped, "
                         "its recordings will not be announced", session.key)
             state.save()
