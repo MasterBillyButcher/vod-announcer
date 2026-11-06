@@ -19,6 +19,7 @@ import os
 import shutil
 import sys
 import traceback
+from datetime import timedelta
 
 from app.config import Config, load_config
 from app.discord_notify import build_announcement, send
@@ -30,7 +31,7 @@ from app.savedly import SavedlyClient, UploadError
 from app.session_manager import SessionManager
 from app.sources.streamrecorder import NoDownloadURLError, StreamRecorderSource
 from app.state_manager import StateManager
-from app.timeutil import format_duration, now_utc
+from app.timeutil import format_duration, now_utc, to_tz
 
 log = get_logger()
 
@@ -164,12 +165,24 @@ def run(cfg: Config) -> int:
         due = []
     announced = 0
 
+    # Freshness rule at announcement level: sessions older than the backlog
+    # window (today + yesterday) are never announced - retire them so they
+    # stop being retried on every run.
+    cutoff = (to_tz(now_utc(), cfg.timezone).date()
+              - timedelta(days=cfg.backlog_days - 1)).isoformat()
+
     def _given_up(rec: Recording) -> bool:
-        return rec.status == "blocked" or (
-            rec.attempts >= cfg.max_recording_attempts and not rec.link
-        )
+        return rec.attempts >= cfg.max_recording_attempts and not rec.link
 
     for session in due:
+        if session.rec_date < cutoff:
+            sessions.mark_skipped(
+                session, f"older than the {cfg.backlog_days}-day freshness window")
+            log.warning("session %s is older than the freshness window - skipped, "
+                        "its recordings will not be announced", session.key)
+            state.save()
+            continue
+
         summary = sessions.session_summary(session)
         recordings = summary["recordings"]
         ok_parts: list[dict] = []
@@ -184,14 +197,11 @@ def run(cfg: Config) -> int:
                     "link": rec.link,
                 })
                 continue
-            if rec.status == "blocked":
-                warnings.append(
-                    f"\u26A0\uFE0F Part {idx} ({rec.rec_date}) is not downloadable yet - "
-                    "it needs the STREAMRECORDER_COOKIE secret (see docs/DEPLOYMENT.md)"
-                )
-                continue
+            # NOTE: a previously `blocked` recording is RETRIED on every run
+            # while its session is inside the freshness window - "no download
+            # URL yet" is an environment condition that can change (cookie or
+            # SR_DASHBOARD_URL added later, the site unlocking the recording).
             try:
-                rec.attempts += 1
                 rec.status = "downloading"
                 state.update_recording(rec)
                 state.save()
@@ -203,16 +213,19 @@ def run(cfg: Config) -> int:
                     "link": rec.link,
                 })
             except NoDownloadURLError as exc:
+                # Not the recording's fault: do NOT count it as an attempt.
                 rec.status = "blocked"
                 rec.last_error = str(exc)[:300]
                 state.update_recording(rec)
-                log.warning("recording %s is blocked (no public download URL): %s",
+                log.warning("recording %s has no download URL yet (will retry next run): %s",
                             rec.source_id, exc)
                 warnings.append(
-                    f"\u26A0\uFE0F Part {idx} ({rec.rec_date}) is not downloadable yet - "
-                    "it needs the STREAMRECORDER_COOKIE secret (see docs/DEPLOYMENT.md)"
+                    f"\u26A0\uFE0F Part {idx} ({rec.rec_date}) has no download URL yet - "
+                    "check the STREAMRECORDER_COOKIE secret and add SR_DASHBOARD_URL "
+                    "(docs/DEPLOYMENT.md Step 8)"
                 )
             except (DownloadError, UploadError, RuntimeError, OSError) as exc:
+                rec.attempts += 1
                 rec.last_error = str(exc)[:300]
                 state.update_recording(rec)
                 if _given_up(rec):
@@ -224,6 +237,7 @@ def run(cfg: Config) -> int:
                     log.warning("recording %s attempt %d failed (will retry next run): %s",
                                 rec.source_id, rec.attempts, exc)
             except Exception as exc:  # noqa: BLE001 - unexpected bug: log, keep state, retry next run
+                rec.attempts += 1
                 rec.last_error = f"{type(exc).__name__}: {exc}"[:300]
                 state.update_recording(rec)
                 pending += 1

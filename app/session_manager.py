@@ -73,7 +73,7 @@ class SessionManager:
         due: list[Session] = []
         for raw in self.state.data["sessions"].values():
             session = Session.from_dict(raw)
-            if session.announced or not session.recording_ids:
+            if session.announced or session.skipped or not session.recording_ids:
                 continue
             ready = self._ready_at(session)
             if (ready and now >= ready) or self._newer_date_exists(session):
@@ -88,6 +88,13 @@ class SessionManager:
         session.announced = True
         session.announced_at = iso(now_utc())
         session.message_url = message_url
+        self.state.update_session(session)
+
+    def mark_skipped(self, session: Session, reason: str = "") -> None:
+        """Permanently retire a session without announcing it (e.g. it fell
+        outside the freshness window while its parts were blocked)."""
+        session.skipped = True
+        session.skip_reason = reason
         self.state.update_session(session)
 
     # -------------------------------------------------------- completeness

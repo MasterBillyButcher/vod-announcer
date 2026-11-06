@@ -13,7 +13,11 @@ import app.main as main_module
 from app.config import Config
 from app.main import run
 from app.models import Recording
-from app.timeutil import iso, now_utc
+from app.timeutil import iso, now_utc, to_tz
+
+# Inside the freshness window (today + yesterday) - sessions older than
+# this are skipped by design (see test_blocked_retry.py).
+REC_DATE = to_tz(now_utc()).date().isoformat()
 
 
 class FakeSource:
@@ -27,7 +31,7 @@ class FakeSource:
             source_id="111",
             channel=channel,
             title="Test Stream",
-            rec_date="2025-10-08",
+            rec_date=REC_DATE,
             duration_seconds=10,
             preview_url="https://signed.example/x.mp4?iv=a&enc=b",
             page_url="https://example.com",
@@ -93,15 +97,15 @@ class TestPipelinePersistence:
         # run 1: discovers, downloads, renames, uploads, announces
         assert run(cfg) == 0
         assert len(FakeUploader.calls) == 1
-        assert FakeUploader.calls[0] == "BS_2025-10-08_Test_Stream.mp4"
+        assert FakeUploader.calls[0] == f"BS_{REC_DATE}_Test_Stream.mp4"
 
         import json
         state = json.load(open(cfg.state_path, encoding="utf-8"))
         rec = state["recordings"]["111"]
         assert rec["status"] == "uploaded"
         assert rec["link"] == "https://savedly.net/f/1"
-        assert rec["filename"] == "BS_2025-10-08_Test_Stream"
-        session = state["sessions"]["teststreamer|2025-10-08"]
+        assert rec["filename"] == f"BS_{REC_DATE}_Test_Stream"
+        session = state["sessions"][f"teststreamer|{REC_DATE}"]
         assert session["announced"] is True
         assert len(mocks) == 1
         assert "https://savedly.net/f/1" in mocks[0]
@@ -115,4 +119,4 @@ class TestPipelinePersistence:
         cfg = make_cfg(tmp_path)
         assert run(cfg) == 0
         # the display name given to the uploader IS the validated BS_ name
-        assert FakeUploader.calls[0].startswith("BS_2025-10-08_")
+        assert FakeUploader.calls[0].startswith(f"BS_{REC_DATE}_")

@@ -55,6 +55,8 @@ class Session:
     announced: bool = False
     announced_at: str = ""
     message_url: str = ""          # Discord message link after posting (if returned)
+    skipped: bool = False          # True = permanently not announced (too old)
+    skip_reason: str = ""
 
     def to_dict(self) -> dict:
         return self.__dict__.copy()
