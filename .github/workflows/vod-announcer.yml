@@ -1,0 +1,62 @@
+name: VOD Announcer
+
+# Runs every 15 minutes on GitHub's servers - your PC stays OFFLINE.
+# GitHub cron is best-effort (can be delayed a few minutes at busy times);
+# that is fine because every run resumes from the committed state.
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Discovery only (no download/upload/announce)"
+        type: boolean
+        default: false
+      diagnose:
+        description: "Print source report and exit"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write   # needed to commit state.json back to the repo
+
+concurrency:
+  group: vod-announcer
+  cancel-in-progress: false   # never kill a run mid-upload; queue instead
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run VOD Announcer
+        env:
+          # REQUIRED - where announcements are posted:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          # Optional overrides (defaults: beaststatsofficial / 60 / 7 / @bobmasterbillie):
+          STREAMERS: ${{ secrets.STREAMERS }}
+          WAIT_MINUTES: ${{ secrets.WAIT_MINUTES }}
+          BACKLOG_DAYS: ${{ secrets.BACKLOG_DAYS }}
+          CONTACT: ${{ secrets.CONTACT }}
+          # Optional: streamrecorder.io session cookie for FULL downloads
+          STREAMRECORDER_COOKIE: ${{ secrets.STREAMRECORDER_COOKIE }}
+          # Manual trigger switches:
+          DRY_RUN: ${{ github.event.inputs.dry_run == 'true' && '1' || '' }}
+          DIAGNOSE: ${{ github.event.inputs.diagnose == 'true' && '1' || '' }}
+        run: python -m app.main
+
+      - name: Commit state (so the next run remembers everything)
+        run: bash scripts/commit_state.sh
