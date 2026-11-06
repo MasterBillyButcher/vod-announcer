@@ -1,6 +1,216 @@
 {
+ "meta": {
+  "last_saved": "2026-11-06T06:10:18+00:00"
+ },
+ "recordings": {
+  "231300554": {
+   "attempts": 1,
+   "channel": "beaststatsofficial",
+   "delete_token": "",
+   "discovered_at": "2026-11-06T06:10:17+00:00",
+   "duration_seconds": 8779,
+   "ended_at": null,
+   "filename": "",
+   "last_error": "no download URL available for recording 231300554 (only the latest recording exposes a public preview URL; set the STREAMRECORDER_COOKIE secret for full downloads)",
+   "link": "",
+   "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
+   "preview_url": "",
+   "rec_date": "2026-10-30",
+   "sha256": "",
+   "size_bytes": null,
+   "source_id": "231300554",
+   "status": "blocked",
+   "title": "Timepass Time 👁️"
+  },
+  "232870322": {
+   "attempts": 1,
+   "channel": "beaststatsofficial",
+   "delete_token": "",
+   "discovered_at": "2026-11-06T06:10:17+00:00",
+   "duration_seconds": 9708,
+   "ended_at": null,
+   "filename": "",
+   "last_error": "no download URL available for recording 232870322 (only the latest recording exposes a public preview URL; set the STREAMRECORDER_COOKIE secret for full downloads)",
+   "link": "",
+   "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
+   "preview_url": "",
+   "rec_date": "2026-11-01",
+   "sha256": "",
+   "size_bytes": null,
+   "source_id": "232870322",
+   "status": "blocked",
+   "title": "Timepass Time 👁️"
+  },
+  "233552216": {
+   "attempts": 1,
+   "channel": "beaststatsofficial",
+   "delete_token": "",
+   "discovered_at": "2026-11-06T06:10:17+00:00",
+   "duration_seconds": 8772,
+   "ended_at": null,
+   "filename": "",
+   "last_error": "no download URL available for recording 233552216 (only the latest recording exposes a public preview URL; set the STREAMRECORDER_COOKIE secret for full downloads)",
+   "link": "",
+   "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
+   "preview_url": "",
+   "rec_date": "2026-11-02",
+   "sha256": "",
+   "size_bytes": null,
+   "source_id": "233552216",
+   "status": "blocked",
+   "title": "Timepass Time 👁️"
+  },
+  "234285954": {
+   "attempts": 1,
+   "channel": "beaststatsofficial",
+   "delete_token": "",
+   "discovered_at": "2026-11-06T06:10:17+00:00",
+   "duration_seconds": 19435,
+   "ended_at": null,
+   "filename": "",
+   "last_error": "no download URL available for recording 234285954 (only the latest recording exposes a public preview URL; set the STREAMRECORDER_COOKIE secret for full downloads)",
+   "link": "",
+   "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
+   "preview_url": "",
+   "rec_date": "2026-11-03",
+   "sha256": "",
+   "size_bytes": null,
+   "source_id": "234285954",
+   "status": "blocked",
+   "title": "Timepass Time 👁️"
+  },
+  "235113230": {
+   "attempts": 1,
+   "channel": "beaststatsofficial",
+   "delete_token": "",
+   "discovered_at": "2026-11-06T06:10:17+00:00",
+   "duration_seconds": 7462,
+   "ended_at": null,
+   "filename": "",
+   "last_error": "no download URL available for recording 235113230 (only the latest recording exposes a public preview URL; set the STREAMRECORDER_COOKIE secret for full downloads)",
+   "link": "",
+   "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
+   "preview_url": "",
+   "rec_date": "2026-11-04",
+   "sha256": "",
+   "size_bytes": null,
+   "source_id": "235113230",
+   "status": "blocked",
+   "title": "Timepass Time 👁️"
+  },
+  "235192867": {
+   "attempts": 1,
+   "channel": "beaststatsofficial",
+   "delete_token": "",
+   "discovered_at": "2026-11-06T06:10:17+00:00",
+   "duration_seconds": 5900,
+   "ended_at": null,
+   "filename": "",
+   "last_error": "no download URL available for recording 235192867 (only the latest recording exposes a public preview URL; set the STREAMRECORDER_COOKIE secret for full downloads)",
+   "link": "",
+   "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
+   "preview_url": "",
+   "rec_date": "2026-11-04",
+   "sha256": "",
+   "size_bytes": null,
+   "source_id": "235192867",
+   "status": "blocked",
+   "title": "Timepass Time 👁️"
+  },
+  "235918109": {
+   "attempts": 0,
+   "channel": "beaststatsofficial",
+   "delete_token": "",
+   "discovered_at": "2026-11-06T06:10:17+00:00",
+   "duration_seconds": 6124,
+   "ended_at": null,
+   "filename": "",
+   "last_error": "",
+   "link": "",
+   "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
+   "preview_url": "https://walterlike.eu.srcdn.net/ddlprev/c9f736a6-6e9c-43b7-83ec-9a0cdcd38d66/v.mp4?iv=W4vc4yPg-lurvbsysSCs2Q&enc=FeuPkvwuxuqDTi4kGwzfiyTuCBTPlpLhuoGBUAZl6DrGkt8fe4LggOxvUIZxu-q5J5KprCaqP2_uT6UMeC0dYHMREZm3-Hmr02iq2HVzYW6AJltpbc77YPQ3AWLftfqUJLRCpXx6_Q82eem3W9smrZcQTJKaR-ZEucAx_kTSxUNHGU8hW18fuCjn-awBN3suJAxzPVGLVdXwCqgGVmViX1-y36tC6E762G0sZoTZC1EMgRYb4f1U3mkHF_abNgOvAm-Ue1A6HZEeJZW5zy15k5Osi2fGwfWaR_bQK5x3ypbpLk1gFQsrEbY2cWonif3bfIvatw8afVrR6FixALhSDhujXuoJtIPqtzXZ3amYasIO9vmUmYGNcNcwQhWW_Jbccs2ZmUhHZ18MjhKr52Z7mhi3TdO6Bksu56BR3xXSjUlT8vj3lh-m9ugEBaQXhHQf1DRIImSupTiWLk4_P1k1DdYo802jjI4NgZY1ut1cTU1MZ617UADBo1F5yjrr9XFPY_LLIp_NA_Ty47SHozmiZx66zGxXSqYB6aKxY5pvkN7yweqOLrk77FAk5_v93fQZ",
+   "rec_date": "2026-11-05",
+   "sha256": "",
+   "size_bytes": null,
+   "source_id": "235918109",
+   "status": "discovered",
+   "title": "Timepass Time 👁️"
+  }
+ },
  "schema_version": 1,
- "recordings": {},
- "sessions": {},
- "meta": {}
+ "sessions": {
+  "beaststatsofficial|2026-10-30": {
+   "announced": false,
+   "announced_at": "",
+   "channel": "beaststatsofficial",
+   "key": "beaststatsofficial|2026-10-30",
+   "last_activity": "2026-11-06T06:10:17+00:00",
+   "message_url": "",
+   "rec_date": "2026-10-30",
+   "recording_ids": [
+    "231300554"
+   ]
+  },
+  "beaststatsofficial|2026-11-01": {
+   "announced": false,
+   "announced_at": "",
+   "channel": "beaststatsofficial",
+   "key": "beaststatsofficial|2026-11-01",
+   "last_activity": "2026-11-06T06:10:17+00:00",
+   "message_url": "",
+   "rec_date": "2026-11-01",
+   "recording_ids": [
+    "232870322"
+   ]
+  },
+  "beaststatsofficial|2026-11-02": {
+   "announced": false,
+   "announced_at": "",
+   "channel": "beaststatsofficial",
+   "key": "beaststatsofficial|2026-11-02",
+   "last_activity": "2026-11-06T06:10:17+00:00",
+   "message_url": "",
+   "rec_date": "2026-11-02",
+   "recording_ids": [
+    "233552216"
+   ]
+  },
+  "beaststatsofficial|2026-11-03": {
+   "announced": false,
+   "announced_at": "",
+   "channel": "beaststatsofficial",
+   "key": "beaststatsofficial|2026-11-03",
+   "last_activity": "2026-11-06T06:10:17+00:00",
+   "message_url": "",
+   "rec_date": "2026-11-03",
+   "recording_ids": [
+    "234285954"
+   ]
+  },
+  "beaststatsofficial|2026-11-04": {
+   "announced": false,
+   "announced_at": "",
+   "channel": "beaststatsofficial",
+   "key": "beaststatsofficial|2026-11-04",
+   "last_activity": "2026-11-06T06:10:17+00:00",
+   "message_url": "",
+   "rec_date": "2026-11-04",
+   "recording_ids": [
+    "235113230",
+    "235192867"
+   ]
+  },
+  "beaststatsofficial|2026-11-05": {
+   "announced": false,
+   "announced_at": "",
+   "channel": "beaststatsofficial",
+   "key": "beaststatsofficial|2026-11-05",
+   "last_activity": "2026-11-06T06:10:17+00:00",
+   "message_url": "",
+   "rec_date": "2026-11-05",
+   "recording_ids": [
+    "235918109"
+   ]
+  }
+ }
 }
