@@ -1,6 +1,6 @@
 {
  "meta": {
-  "last_saved": "2026-11-06T14:15:40+00:00"
+  "last_saved": "2026-11-06T20:30:04+00:00"
  },
  "recordings": {
   "235113230": {
@@ -42,14 +42,14 @@
    "title": "Timepass Time 👁️"
   },
   "235918109": {
-   "attempts": 0,
+   "attempts": 1,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-06T14:15:38+00:00",
    "duration_seconds": 6124,
    "ended_at": null,
    "filename": "",
-   "last_error": "",
+   "last_error": "download failed after 3 attempts: 403 Client Error: Forbidden for url: https://walterlike.eu.srcdn.net/ddlprev/c9f736a6-6e9c-43b7-83ec-9a0cdcd38d66/v.mp4?iv=PAw-gia2HI3U-TmwyDM-hQ&enc=Fp6YhNUiWcK3D-d2yjteEzXgygw1xkVg9OVQSNUfUuz_n6ZG6CWi9dn4v2sNTdxwbTJkT5E6o_rFWJR0XIUe5THSaJjB2Q-V4RnR23yj08v8gASC06LN",
    "link": "",
    "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
    "preview_url": "https://walterlike.eu.srcdn.net/ddlprev/c9f736a6-6e9c-43b7-83ec-9a0cdcd38d66/v.mp4?iv=PAw-gia2HI3U-TmwyDM-hQ&enc=Fp6YhNUiWcK3D-d2yjteEzXgygw1xkVg9OVQSNUfUuz_n6ZG6CWi9dn4v2sNTdxwbTJkT5E6o_rFWJR0XIUe5THSaJjB2Q-V4RnR23yj08v8gASC06LNwrdK32ICQRhqO4317zYRQUfBeJtH3TAPZbSb7zmFkzp_cERTtP3Ce-8n9VUrJShTfC2rVWobhMT7jKP9M7r4Qq3pKiqUylC2XpVIzsNLP57c5BoTC1YQa4Y1WcFidEEvII8GGI8dyHkg_UsYdlzSLM9H_t9T3lHXBKC6R3B-3lFvpnAx65nAgOdQ9zjoTJAZGNck9wj5OWsoc8B6m-O4X6cIYLAxis44bRSamzTuF6p6LtKERYeKcB_JF2beiJh7xyXOCGj3blPqzAuHyJjinyD9hli8g1yf8vbsEDIfH0eQ7AuwRWuV1jqoBPVdvR4xfPlAsXTQwecVUz756PDI7pOPfG4u2T9aDUt-33XZ8cF3SmcW7fjH4FMAoT5cnidmsdY1RAYLTlZHh03bid3NiZEmfW6GU__TdIzkGyHWnSYMOmU6IHjamyBt0HIbeSMaSbkAiFnyySdX",
@@ -57,7 +57,7 @@
    "sha256": "",
    "size_bytes": null,
    "source_id": "235918109",
-   "status": "discovered",
+   "status": "downloading",
    "title": "Timepass Time 👁️"
   }
  },
@@ -75,8 +75,8 @@
     "235113230",
     "235192867"
    ],
-   "skip_reason": "",
-   "skipped": false
+   "skip_reason": "older than the 2-day freshness window (+1d grace)",
+   "skipped": true
   },
   "beaststatsofficial|2026-11-05": {
    "announced": false,
