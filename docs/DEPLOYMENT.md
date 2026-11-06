@@ -272,6 +272,15 @@ the public channel page; you can also point it at the exact page you use:
 
 ## Step 9 — If something misbehaves: the F12 console capture
 
+**Fast first check — the built-in diagnose run:** Actions → **Run workflow** →
+tick **diagnose** → Run. The log prints one `DIAGNOSE {...}` JSON line
+showing: whether the cookie carries the Authorization token, how many
+download links (`/ddl/`, `m.php`) the public channel page exposes, and —
+if `SR_DASHBOARD_URL` is set — whether your RECORDINGS page is reachable
+and how many `m.php` gateway links it carries (link shapes only, token
+values are stripped). Send that JSON line and the problem is usually
+visible immediately.
+
 If a GitHub run shows errors from streamrecorder.io or savedly.net (site
 layouts change over time), capture what the sites actually do:
 

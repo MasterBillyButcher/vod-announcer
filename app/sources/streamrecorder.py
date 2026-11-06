@@ -270,10 +270,21 @@ class StreamRecorderSource:
                 if url not in mphp_links:
                     mphp_links.append(url)
 
-        for link in mphp_links[:5]:  # be polite to the site
+        # m.php gateway links: try the ones naming THIS recording first,
+        # then the rest.  Every gateway answer is verified to belong to the
+        # wanted recording (the signed url embeds twitch_<channel>_<date>) -
+        # a gateway reply for a different recording is rejected, never
+        # downloaded by mistake.
+        matching_mphp = [u for u in mphp_links if rec.source_id in u]
+        other_mphp = [u for u in mphp_links if rec.source_id not in u]
+        for link in (matching_mphp + other_mphp)[:5]:  # be polite to the site
             fresh = self._request_mphp(link)
-            if fresh:
+            if not fresh:
+                continue
+            if _recording_in_url(fresh, rec):
                 return fresh
+            log.warning("streamrecorder: gateway returned a link for a DIFFERENT "
+                        "recording - not using it")
         return None
 
     def _request_mphp(self, url: str) -> str | None:
@@ -303,22 +314,61 @@ class StreamRecorderSource:
 
     # ------------------------------------------------------------ diagnose
     def diagnose(self, channel: str) -> dict:
+        """One-shot report of everything the downloader depends on.
+
+        Safe to print: token VALUES are stripped, only link SHAPES are
+        shown (see _shape).  This answers, in a single run:
+        - is the cookie active and does it carry the Authorization token?
+        - does the public channel page expose any download links?
+        - is SR_DASHBOARD_URL reachable and does it carry m.php gateway
+          links (the thing the site's own Download button calls)?
+        """
         html = self.fetch_channel_page(channel)
         cards = _CARD_RE.findall(html)
-        return {
+        signed = _signed_urls(html)
+        report = {
             "channel": channel,
             "cookie_set": bool(self.cfg.streamrecorder_cookie),
+            "cookie_has_auth": "authorization=" in self.cfg.streamrecorder_cookie.lower(),
             "page_bytes": len(html),
             "latest_id": (_LATEST_ID_RE.search(html) or [None, None])[1],
             "latest_title": (_LATEST_TITLE_RE.search(html) or [None, ""])[1],
             "latest_teaser_date": self._latest_teaser_date(html),
             "past_cards": len(cards),
             "has_signed_sources": bool(_LATEST_SOURCES_RE.search(html)),
+            "channel_ddl_urls": sum(1 for u in signed if "/ddl/" in u),
+            "channel_ddlprev_urls": sum(1 for u in signed if "/ddlprev/" in u),
+            "channel_mphp_links": len(_MPHP_RE.findall(html)),
         }
+        if self.cfg.sr_dashboard_url:
+            try:
+                dhtml = self._get(self.cfg.sr_dashboard_url)
+                dsigned = _signed_urls(dhtml)
+                report["dashboard"] = {
+                    "ok": True,
+                    "bytes": len(dhtml),
+                    "ddl_urls": sum(1 for u in dsigned if "/ddl/" in u),
+                    "mphp_links": len(_MPHP_RE.findall(dhtml)),
+                    "mphp_shape": [_shape(u) for u in _MPHP_RE.findall(dhtml)[:3]],
+                }
+            except requests.RequestException as exc:
+                report["dashboard"] = {"ok": False, "error": str(exc)[:200]}
+        else:
+            report["dashboard"] = "not configured (SR_DASHBOARD_URL secret is empty)"
+        return report
 
 
 def _signed_urls(html: str) -> list[str]:
     return re.findall(r'https://[a-z0-9.-]*srcdn\.net/(?:ddl|ddlprev)/[^"\'\s]+?\.mp4\?[^"\'\s]+', html)
+
+
+def _shape(url: str) -> str:
+    """URL structure with query VALUES stripped - safe to print in logs."""
+    if "?" not in url:
+        return url[:120]
+    base, _, query = url.partition("?")
+    names = "&".join(p.split("=", 1)[0] for p in query.split("&") if p)
+    return f"{base}?{names}"[:120]
 
 
 def _iso_date(value: str):

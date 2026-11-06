@@ -177,6 +177,46 @@ class TestParsing:
         url = src.resolve_fresh_url(rec)
         assert "2026-11-04" in url
 
+    def test_gateway_rejects_wrong_recording(self, monkeypatch):
+        """A gateway answer for a DIFFERENT recording must never be used -
+        it would download the wrong VOD."""
+        other = self.SIGNED.replace("2026-11-04", "2026-11-03")
+        page = '<a href="/m.php?download=abc">Download</a>'
+        src = self._resolver(monkeypatch, page, FakeResp(
+            status_code=302, headers={"Location": other}))
+        rec = Recording(source_id="9", channel="beaststatsofficial",
+                        rec_date="2026-11-04")
+        assert src.resolve_fresh_url(rec) is None
+
+    def test_gateway_prefers_link_naming_this_recording(self, monkeypatch):
+        """m.php links containing the recording id are tried first."""
+        seen = []
+        other_link = "/m.php?download=777"
+        my_link = "/m.php?download=235113230"
+        page = f'<a href="{other_link}">a</a><a href="{my_link}">b</a>'
+        cfg = Config(streamers=["beaststatsofficial"],
+                     streamrecorder_cookie="Authorization=a; bkndsrv=b")
+        src = StreamRecorderSource(cfg)
+
+        def fake_get(url, timeout=None, **kw):
+            seen.append(url)
+            if "m.php" in url:
+                if "235113230" in url:
+                    return FakeResp(status_code=302,
+                                    headers={"Location": self.SIGNED})
+                return FakeResp(status_code=302, headers={"Location":
+                                    self.SIGNED.replace("2026-11-04", "2026-11-01")})
+            return FakeResp(text=page)
+
+        monkeypatch.setattr(src.session, "get", fake_get)
+        rec = Recording(source_id="235113230", channel="beaststatsofficial",
+                        rec_date="2026-11-04")
+        url = src.resolve_fresh_url(rec)
+        assert url is not None and "2026-11-04" in url
+        mphp_hits = [u for u in seen if "m.php" in u]
+        assert mphp_hits, "gateway must have been called"
+        assert mphp_hits[0].endswith("download=235113230")
+
     def test_resolve_returns_none_when_nothing_found(self, monkeypatch):
         src = self._resolver(monkeypatch, "<html>empty</html>",
                              FakeResp(text="nope"))
@@ -209,3 +249,31 @@ class TestParsing:
         assert report["latest_id"] == "235918109"
         assert report["past_cards"] == 2
         assert report["has_signed_sources"] is True
+        assert report["channel_ddlprev_urls"] == 1
+        assert report["channel_ddl_urls"] == 0
+        assert report["channel_mphp_links"] == 0
+        assert report["cookie_has_auth"] is False
+        assert "not configured" in report["dashboard"]
+
+    def test_diagnose_with_dashboard(self, monkeypatch):
+        html = FIXTURE + ('<a href="/twitch/m.php?download=235113230&token=x">DL</a>'
+                          '<a href="/twitch/m.php?download=235192867&token=y">DL</a>')
+        cfg = Config(streamers=["beaststatsofficial"],
+                     streamrecorder_cookie="Authorization=a",
+                     sr_dashboard_url="https://streamrecorder.io/dashboard/rec")
+        src = StreamRecorderSource(cfg)
+
+        def fake_get(url, timeout=None, **kw):
+            if "dashboard" in url:
+                return FakeResp(text=html)
+            return FakeResp(text=FIXTURE)
+
+        monkeypatch.setattr(src.session, "get", fake_get)
+        report = src.diagnose("beaststatsofficial")
+        assert report["dashboard"]["ok"] is True
+        assert report["dashboard"]["mphp_links"] == 2
+        assert report["dashboard"]["mphp_shape"] == [
+            "/twitch/m.php?download&token",
+            "/twitch/m.php?download&token",
+        ]
+        assert "token=x" not in str(report)  # token values never leaked
