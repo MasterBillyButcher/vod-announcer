@@ -1,6 +1,6 @@
 {
  "meta": {
-  "last_saved": "2026-11-07T18:10:05+00:00"
+  "last_saved": "2026-11-07T21:48:34+00:00"
  },
  "recordings": {
   "235113230": {
@@ -59,6 +59,25 @@
    "source_id": "235918109",
    "status": "downloading",
    "title": "Timepass Time 👁️"
+  },
+  "237474521": {
+   "attempts": 0,
+   "channel": "beaststatsofficial",
+   "delete_token": "",
+   "discovered_at": "2026-11-07T21:48:34+00:00",
+   "duration_seconds": 11856,
+   "ended_at": null,
+   "filename": "",
+   "last_error": "",
+   "link": "",
+   "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
+   "preview_url": "https://charli25s.eu.srcdn.net/ddlprev/43e8e53f-de6a-4084-b701-90319bf909f7/v.mp4?iv=adIr164uWV4lQWT5_7YuVw&enc=wsc1_A8S1-i_ve53LM41qMRwaUut2yz2DjIIKcqhe-u6FbawDAzFBnVehYVm-xNkhV0-bozP-9hmsrSl34fO8_T2N40rwOZh42T6LzyQ2kx5FU9Su6u5up27KAYMX8WWm-tkumgteSmyq5B2M0RKO-53pHdpqM-JmmFjXj8N2m85JlwPcL45sK0E-XJstXhMVRJIt7jkRLUDLRLNeb2fd9RjT6iy_wbeN8Zvp5CR0aR3jLdDZFc1MtUZOND76-9mdCcHtgzna2Tdeo6Wk04KoSV3DX16j8Pb3SBgFTdJ1Kcnj2QYAEQ8o12iWGVRjvyzXxt92Dj7YooU1OuNb4vR8tFWphrVpKU_7J0MtZQOCisXEWWjC_7qci7K5PK037CKx4TTP9CAUFw79zw0-sYJFFh5tnYFWknswPUzNwootPfPFQjytvBz4xJ8IY7Gas4jW8rs-Yq3K64qnd-zROQ-lr1QQq5Snqa3Zbx-_H0TC60yCFpAHwFD8x_1lW2_sctGsnXdMrIkoZpYM27n_XqvU5UE9BQ_RRhoKNoi50pgHgvDwF5eeFEow3apFjzP_rwZ",
+   "rec_date": "2026-11-07",
+   "sha256": "",
+   "size_bytes": null,
+   "source_id": "237474521",
+   "status": "discovered",
+   "title": "Timepass Time 👁️"
   }
  },
  "schema_version": 1,
@@ -88,6 +107,20 @@
    "rec_date": "2026-11-05",
    "recording_ids": [
     "235918109"
+   ],
+   "skip_reason": "older than the 2-day freshness window (+1d grace)",
+   "skipped": true
+  },
+  "beaststatsofficial|2026-11-07": {
+   "announced": false,
+   "announced_at": "",
+   "channel": "beaststatsofficial",
+   "key": "beaststatsofficial|2026-11-07",
+   "last_activity": "2026-11-07T21:48:34+00:00",
+   "message_url": "",
+   "rec_date": "2026-11-07",
+   "recording_ids": [
+    "237474521"
    ],
    "skip_reason": "",
    "skipped": false
