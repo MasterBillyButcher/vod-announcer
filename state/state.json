@@ -1,6 +1,6 @@
 {
  "meta": {
-  "last_saved": "2026-11-09T09:38:08+00:00"
+  "last_saved": "2026-11-09T20:07:39+00:00"
  },
  "recordings": {
   "235113230": {
@@ -99,7 +99,7 @@
    "title": "timepass time 🎦"
   },
   "238325714": {
-   "attempts": 2,
+   "attempts": 3,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-08T22:42:06+00:00",
@@ -115,6 +115,25 @@
    "size_bytes": null,
    "source_id": "238325714",
    "status": "downloading",
+   "title": "timepass time 🎦"
+  },
+  "239069423": {
+   "attempts": 0,
+   "channel": "beaststatsofficial",
+   "delete_token": "",
+   "discovered_at": "2026-11-09T20:07:21+00:00",
+   "duration_seconds": 6114,
+   "ended_at": null,
+   "filename": "",
+   "last_error": "",
+   "link": "",
+   "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
+   "preview_url": "https://feelsbadman.eu.srcdn.net/ddlprev/76fbbd02-208b-44d8-8c51-cde069937c04/v.mp4?iv=oLAcSysWGUj7G2leisj8Iw&enc=Vpbae_3HIcmU0JmNMAfn5HMNJ82CaThS4PJu9Zx6Y0Ev9RiNUfEeDBPYlt2eeLgTscYe7Ci8h725yelbvW08cb-t6Tq24QjqJTOAdjsdSS4S7-NuTn3idsgeiU1u83st3LhubArXLNV2_UisrrKYxDnRu32KQ-OmnyFHEcXEOz8GbVNvYvVMItZr59VnY9a7rC9_4hf4Z4wC5bSBMSuNElQuA-MGa-uaOAHLuqCF9t6azxM4ZacIURR7XudBkMJzZXOu9o8lEXP_kcId_q7tqQtanBH8u2zsOjBd4WM1pWpG153d-PbLGchHqJa1JltlYvO1dwfKzuJSRo53xtIkWjmEPnRiYnI9gQqhaSt2_SljVUYbr9j3iyeILZ0FzToUYq9LsvWjUrsxmzg_7xUQQySFJJa3YQrqdspWpkgUIiM7ADARM791hHbJujpUWK8RPvqP9eu8K8QLrTgOV4sPi9_qD2kRuBlaS4AWdIIDBJHpttL2XcXlSYrZjQPGBVhIOMES2gtLwLssVhGpDXfqz5FhKPNspQKiBuwxCS4ARAi6qMyiNDsU6r0L3G8v_iBz",
+   "rec_date": "2026-11-09",
+   "sha256": "",
+   "size_bytes": null,
+   "source_id": "239069423",
+   "status": "discovered",
    "title": "timepass time 🎦"
   }
  },
@@ -161,8 +180,8 @@
     "237474521",
     "237596720"
    ],
-   "skip_reason": "",
-   "skipped": false
+   "skip_reason": "older than the 2-day freshness window (+1d grace)",
+   "skipped": true
   },
   "beaststatsofficial|2026-11-08": {
    "announced": false,
@@ -174,6 +193,20 @@
    "rec_date": "2026-11-08",
    "recording_ids": [
     "238325714"
+   ],
+   "skip_reason": "",
+   "skipped": false
+  },
+  "beaststatsofficial|2026-11-09": {
+   "announced": false,
+   "announced_at": "",
+   "channel": "beaststatsofficial",
+   "key": "beaststatsofficial|2026-11-09",
+   "last_activity": "2026-11-09T20:07:21+00:00",
+   "message_url": "",
+   "rec_date": "2026-11-09",
+   "recording_ids": [
+    "239069423"
    ],
    "skip_reason": "",
    "skipped": false
