@@ -1,6 +1,6 @@
 {
  "meta": {
-  "last_saved": "2026-11-08T22:42:41+00:00"
+  "last_saved": "2026-11-09T02:00:45+00:00"
  },
  "recordings": {
   "235113230": {
@@ -61,7 +61,7 @@
    "title": "Timepass Time 👁️"
   },
   "237474521": {
-   "attempts": 4,
+   "attempts": 5,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-07T21:48:34+00:00",
@@ -80,7 +80,7 @@
    "title": "Timepass Time 👁️"
   },
   "237596720": {
-   "attempts": 3,
+   "attempts": 4,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-08T07:17:44+00:00",
@@ -99,14 +99,14 @@
    "title": "timepass time 🎦"
   },
   "238325714": {
-   "attempts": 0,
+   "attempts": 1,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-08T22:42:06+00:00",
    "duration_seconds": 6347,
    "ended_at": null,
    "filename": "",
-   "last_error": "",
+   "last_error": "download failed after 3 attempts: 403 Client Error: Forbidden for url: https://feelsbadman.eu.srcdn.net/ddlprev/8db75c74-5cef-427e-832b-9a975bf158d3/v.mp4?iv=viemD2v-hyddVFa9XNkPtw&enc=_lxMsNnGoBAAiIbFldf1l-Zi6v0UB7oVMrRPl26_vAa8CAFj9RB_v5Z_-UdUePDdp6PNGDTQ9ofiB55CevtcTYNJWs_FsNMPJ6R_S-iQ3ubnF6mmVJC",
    "link": "",
    "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
    "preview_url": "https://feelsbadman.eu.srcdn.net/ddlprev/8db75c74-5cef-427e-832b-9a975bf158d3/v.mp4?iv=viemD2v-hyddVFa9XNkPtw&enc=_lxMsNnGoBAAiIbFldf1l-Zi6v0UB7oVMrRPl26_vAa8CAFj9RB_v5Z_-UdUePDdp6PNGDTQ9ofiB55CevtcTYNJWs_FsNMPJ6R_S-iQ3ubnF6mmVJC_1s85CLvFHaYSlWEqbNupl5y8Ka53ilAkGaJdmrXZuhyGxcuxb15qnp4YEUsyCOiCIcYH4TsfyuspNn4P-A0X6rCzl1w7OwxYKKrSdEsbkml_VYGIOrvspZ-omrmLjXcT6uJfAzX63wd-8WjWuVaVwdwXFCFcE6o421UehqvFVZSyt58my3M9udnA9hLMDDdAQoNDbKITTRvdsnsu0i9c7r1z0oL1liCz5peb8B8qcoXAm7B2VYvswJMg2G82jFiSVZpKPf8lsArlgqckYmVIe06Zl-kAJrgdiWIgE96mFZ8-8dGYSF-9fFDPccuvJEwv4n7R6Makkctt6EWITcNuFcOoozX4Cx2lAecDood1mU_OzoD2U57zlqhMcDLkOIAUBmOiAfTcBOsv0cIf_9-EbfcAmEUOyv3qwfV-4sUkRf-Fl6bsjUwLffuRBzQgMmVXLOQy10BRrBPPIGmmZdItAmqYBHIgcTszjw",
@@ -114,7 +114,7 @@
    "sha256": "",
    "size_bytes": null,
    "source_id": "238325714",
-   "status": "discovered",
+   "status": "downloading",
    "title": "timepass time 🎦"
   }
  },
