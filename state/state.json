@@ -1,6 +1,6 @@
 {
  "meta": {
-  "last_saved": "2026-11-10T23:19:33+00:00"
+  "last_saved": "2026-11-11T02:55:22+00:00"
  },
  "recordings": {
   "235113230": {
@@ -118,7 +118,7 @@
    "title": "timepass time 🎦"
   },
   "239069423": {
-   "attempts": 4,
+   "attempts": 5,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-09T20:07:21+00:00",
@@ -137,14 +137,14 @@
    "title": "timepass time 🎦"
   },
   "239839032": {
-   "attempts": 0,
+   "attempts": 1,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-10T23:19:15+00:00",
    "duration_seconds": 13069,
    "ended_at": null,
    "filename": "",
-   "last_error": "",
+   "last_error": "download failed after 3 attempts: 403 Client Error: Forbidden for url: https://charli25s.eu.srcdn.net/ddlprev/4f750649-3bf3-4a3f-8da6-f0bf4dd68327/v.mp4?iv=xW4A7iol3VDNUcXr9vwaJQ&enc=TelUgCkUBZTBxk3NI08hsxbcqyF-vd16Y19AsmOrPdE3ZnZDoZjeH9-1HT1rFvLRLkWy5_Nugzsb_-XkuVeck9KA3qmbwo8QDEaWG7uDnwEtPhjWAeaFF",
    "link": "",
    "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
    "preview_url": "https://charli25s.eu.srcdn.net/ddlprev/4f750649-3bf3-4a3f-8da6-f0bf4dd68327/v.mp4?iv=xW4A7iol3VDNUcXr9vwaJQ&enc=TelUgCkUBZTBxk3NI08hsxbcqyF-vd16Y19AsmOrPdE3ZnZDoZjeH9-1HT1rFvLRLkWy5_Nugzsb_-XkuVeck9KA3qmbwo8QDEaWG7uDnwEtPhjWAeaFFADJx8edShF4QKXagmhL-WnzzHUyfty4bZ-ruH4xQ1P0AQVG7r9G4KNofnpUedpmxMlW9NI81PnjDFHxHkrwpqhEVkxTPNNnRsbjbQ1JEayxUeRY9EyN9yeGcsLT71SwautQcGoDOkoskszh6hSIJBsnUy5fvDt74pgM90_IXJu65FopZNWRCg2lortYKgXaKbzYKpvhR2UChE1LLcfTcHZFUoaqsr9rUFbQZVwmTmWboRCZWTNglu5jXhCw-m3A8z4pwEYfixGXelDKa7PFhgzcJlUbDWadqRsYhZDGA5TigAARdf_UvV-HPQuhmFGk5KHUgHslASAu45X9GqGyUeC0A5v6DfpYOMUiJoWZFz7eXeWg9kNzdE5xm3v9GwK3QmxTnP9I4tI4nVHkVcARi-PqAuXYRXl459QvBtvQ27o6BGeNe2nHaJQU9CFw7W__nI70X9BT-EE0",
@@ -152,7 +152,7 @@
    "sha256": "",
    "size_bytes": null,
    "source_id": "239839032",
-   "status": "discovered",
+   "status": "downloading",
    "title": "timepass time 🎦"
   }
  },
