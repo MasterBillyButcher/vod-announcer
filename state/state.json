@@ -1,6 +1,6 @@
 {
  "meta": {
-  "last_saved": "2026-11-12T00:23:36+00:00"
+  "last_saved": "2026-11-12T07:30:49+00:00"
  },
  "recordings": {
   "235113230": {
@@ -137,7 +137,7 @@
    "title": "timepass time 🎦"
   },
   "239839032": {
-   "attempts": 4,
+   "attempts": 5,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-10T23:19:15+00:00",
@@ -156,14 +156,14 @@
    "title": "timepass time 🎦"
   },
   "240701174": {
-   "attempts": 0,
+   "attempts": 1,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-12T00:23:19+00:00",
    "duration_seconds": 20157,
    "ended_at": null,
    "filename": "",
-   "last_error": "",
+   "last_error": "download failed after 3 attempts: 403 Client Error: Forbidden for url: https://kattahduck.eu.srcdn.net/ddlprev/11e4e441-1b90-4b2b-bfdf-7d46e735b529/v.mp4?iv=QbkeToh7VY3_H5re8ZC1dw&enc=4F-JY4s_3XGDbWSyscD25X3QZ_53fgru6PBifxAWkE-80pP_ja755lOqvQezRLu60eZ_SZwM9lbPS5pMmJOx0ccfxh4bQWDajAm5wInqvKaq6QHA3Y1n",
    "link": "",
    "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
    "preview_url": "https://kattahduck.eu.srcdn.net/ddlprev/11e4e441-1b90-4b2b-bfdf-7d46e735b529/v.mp4?iv=QbkeToh7VY3_H5re8ZC1dw&enc=4F-JY4s_3XGDbWSyscD25X3QZ_53fgru6PBifxAWkE-80pP_ja755lOqvQezRLu60eZ_SZwM9lbPS5pMmJOx0ccfxh4bQWDajAm5wInqvKaq6QHA3Y1n5ScOo8kFL-pt6o6BqA7eNk1SdT7IwhxUk9MCmkHApK4T6MmOxTQI1-b9bRosSbSiz8XmKaDwYc7IVM8Rd0vwizbLL6p0P-g2A5uiP7dRlgvhylknoUlKSXwsVuP_u6yvcyjtFLgC76pPOWQxUPgFWZKoWrALW2UfZ3XOS8DZuvaaPR4hlO4hAma3iNaRtXPsiJixf3Zkp6cWnIErhIA7Lj1zGXDBd-xm5p5vyogXymFQDpdia_mTKrhRU3cyoc1GmV30Muzicn1sBGNmof5-swYgyy3eZRUjcW0r1szBtsNfscDjETuy7vFBCFHpMU1HKQ1SFXNVPI2v61vwamVnRYnjGO9byOpEWbiAU05TtB5aRhGABHtQQP3DnQvWHr4VVH1NZkyWibBYcq4AdGh-jM444_TQftgzIy857cd7cyde4QxQ22E6Fe2OTComoXHf0sn2bkcOSt3B",
@@ -171,7 +171,7 @@
    "sha256": "",
    "size_bytes": null,
    "source_id": "240701174",
-   "status": "discovered",
+   "status": "downloading",
    "title": "Indian Streamer Reacts 🍿"
   }
  },
