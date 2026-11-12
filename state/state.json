@@ -1,6 +1,6 @@
 {
  "meta": {
-  "last_saved": "2026-11-12T16:16:40+00:00"
+  "last_saved": "2026-11-12T22:22:56+00:00"
  },
  "recordings": {
   "235113230": {
@@ -156,7 +156,7 @@
    "title": "timepass time 🎦"
   },
   "240701174": {
-   "attempts": 2,
+   "attempts": 3,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-12T00:23:19+00:00",
@@ -172,6 +172,25 @@
    "size_bytes": null,
    "source_id": "240701174",
    "status": "downloading",
+   "title": "Indian Streamer Reacts 🍿"
+  },
+  "241478795": {
+   "attempts": 0,
+   "channel": "beaststatsofficial",
+   "delete_token": "",
+   "discovered_at": "2026-11-12T22:22:38+00:00",
+   "duration_seconds": 10463,
+   "ended_at": null,
+   "filename": "",
+   "last_error": "",
+   "link": "",
+   "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
+   "preview_url": "https://gachigasm.eu.srcdn.net/ddlprev/2a893266-a956-4b5d-bce6-9fb0516d718d/v.mp4?iv=s67K0CRch8JFkD_GrykVrg&enc=VMjaSI2PgFc_qY9MRinhjhhq-x3iFN7fy9EuBG7FEconlujSCXgKfaWq6gPBoRuIhLz5XWjpec7dme_qaPb6kJ2Es6eWx_MeCaewIT9hPEz9XJMhBMwWs26V_gHmjIMrndHCa5GNesowGOdUxwQf62EdK5r2b1Xnx6XD8kDbqz7qN-UQgYsHTWSOmFvaj4V570y61C8Yq9lGn6ODpXB0EL35SrfBI4NDu584URBIeJmYQ2AuJycvO3L_aGNTn5hzTrd5glarM0yj-AaM_SvKgYAbIOvgIIhphRmldg3nyeBzi54wGF8cqBxo3IZw2Nov-JX1D-lf68QZ07VRQ_3nQCLzIWtq5u1Qnuf0YHqycyZJmapcxkrhVqILrDySW92Uw78C7xEG4lB5aZDnlFWHjNEs7PS-juMfIAP_TmWsNNmZrg1yQYTsQ29vw-TpLd9LuREnGzJW-E7qiRfPwN3BbL_21s-s9a91usdBmWpC2d7Ebh0yvMboTg3zJImuSG18WsHWoxMxWYY49ohhVyvJa0fe5p0h-75LRXW5Xo78n6KOok_XXpZrix18GGueTBk1",
+   "rec_date": "2026-11-12",
+   "sha256": "",
+   "size_bytes": null,
+   "source_id": "241478795",
+   "status": "discovered",
    "title": "Indian Streamer Reacts 🍿"
   }
  },
@@ -260,8 +279,8 @@
    "recording_ids": [
     "239839032"
    ],
-   "skip_reason": "",
-   "skipped": false
+   "skip_reason": "older than the 2-day freshness window (+1d grace)",
+   "skipped": true
   },
   "beaststatsofficial|2026-11-11": {
    "announced": false,
@@ -273,6 +292,20 @@
    "rec_date": "2026-11-11",
    "recording_ids": [
     "240701174"
+   ],
+   "skip_reason": "",
+   "skipped": false
+  },
+  "beaststatsofficial|2026-11-12": {
+   "announced": false,
+   "announced_at": "",
+   "channel": "beaststatsofficial",
+   "key": "beaststatsofficial|2026-11-12",
+   "last_activity": "2026-11-12T22:22:38+00:00",
+   "message_url": "",
+   "rec_date": "2026-11-12",
+   "recording_ids": [
+    "241478795"
    ],
    "skip_reason": "",
    "skipped": false
