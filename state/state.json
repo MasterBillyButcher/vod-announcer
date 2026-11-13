@@ -1,6 +1,6 @@
 {
  "meta": {
-  "last_saved": "2026-11-12T22:22:56+00:00"
+  "last_saved": "2026-11-13T02:46:42+00:00"
  },
  "recordings": {
   "235113230": {
@@ -156,7 +156,7 @@
    "title": "timepass time 🎦"
   },
   "240701174": {
-   "attempts": 3,
+   "attempts": 4,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-12T00:23:19+00:00",
@@ -175,14 +175,14 @@
    "title": "Indian Streamer Reacts 🍿"
   },
   "241478795": {
-   "attempts": 0,
+   "attempts": 1,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-12T22:22:38+00:00",
    "duration_seconds": 10463,
    "ended_at": null,
    "filename": "",
-   "last_error": "",
+   "last_error": "download failed after 3 attempts: 403 Client Error: Forbidden for url: https://gachigasm.eu.srcdn.net/ddlprev/2a893266-a956-4b5d-bce6-9fb0516d718d/v.mp4?iv=s67K0CRch8JFkD_GrykVrg&enc=VMjaSI2PgFc_qY9MRinhjhhq-x3iFN7fy9EuBG7FEconlujSCXgKfaWq6gPBoRuIhLz5XWjpec7dme_qaPb6kJ2Es6eWx_MeCaewIT9hPEz9XJMhBMwWs",
    "link": "",
    "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
    "preview_url": "https://gachigasm.eu.srcdn.net/ddlprev/2a893266-a956-4b5d-bce6-9fb0516d718d/v.mp4?iv=s67K0CRch8JFkD_GrykVrg&enc=VMjaSI2PgFc_qY9MRinhjhhq-x3iFN7fy9EuBG7FEconlujSCXgKfaWq6gPBoRuIhLz5XWjpec7dme_qaPb6kJ2Es6eWx_MeCaewIT9hPEz9XJMhBMwWs26V_gHmjIMrndHCa5GNesowGOdUxwQf62EdK5r2b1Xnx6XD8kDbqz7qN-UQgYsHTWSOmFvaj4V570y61C8Yq9lGn6ODpXB0EL35SrfBI4NDu584URBIeJmYQ2AuJycvO3L_aGNTn5hzTrd5glarM0yj-AaM_SvKgYAbIOvgIIhphRmldg3nyeBzi54wGF8cqBxo3IZw2Nov-JX1D-lf68QZ07VRQ_3nQCLzIWtq5u1Qnuf0YHqycyZJmapcxkrhVqILrDySW92Uw78C7xEG4lB5aZDnlFWHjNEs7PS-juMfIAP_TmWsNNmZrg1yQYTsQ29vw-TpLd9LuREnGzJW-E7qiRfPwN3BbL_21s-s9a91usdBmWpC2d7Ebh0yvMboTg3zJImuSG18WsHWoxMxWYY49ohhVyvJa0fe5p0h-75LRXW5Xo78n6KOok_XXpZrix18GGueTBk1",
@@ -190,7 +190,7 @@
    "sha256": "",
    "size_bytes": null,
    "source_id": "241478795",
-   "status": "discovered",
+   "status": "downloading",
    "title": "Indian Streamer Reacts 🍿"
   }
  },
