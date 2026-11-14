@@ -1,6 +1,6 @@
 {
  "meta": {
-  "last_saved": "2026-11-14T16:51:30+00:00"
+  "last_saved": "2026-11-14T21:05:49+00:00"
  },
  "recordings": {
   "235113230": {
@@ -194,7 +194,7 @@
    "title": "Indian Streamer Reacts 🍿"
   },
   "242352539": {
-   "attempts": 3,
+   "attempts": 4,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-13T23:27:49+00:00",
@@ -326,8 +326,8 @@
    "recording_ids": [
     "241478795"
    ],
-   "skip_reason": "",
-   "skipped": false
+   "skip_reason": "older than the 2-day freshness window (+1d grace)",
+   "skipped": true
   },
   "beaststatsofficial|2026-11-13": {
    "announced": false,
