@@ -1,6 +1,6 @@
 {
  "meta": {
-  "last_saved": "2026-11-16T16:28:24+00:00"
+  "last_saved": "2026-11-17T00:24:31+00:00"
  },
  "recordings": {
   "235113230": {
@@ -232,7 +232,7 @@
    "title": "Indian Streamer Reacts 🍿"
   },
   "243910640": {
-   "attempts": 3,
+   "attempts": 4,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-15T20:28:49+00:00",
@@ -248,6 +248,25 @@
    "size_bytes": null,
    "source_id": "243910640",
    "status": "downloading",
+   "title": "Indian Streamer Reacts 🍿"
+  },
+  "244647653": {
+   "attempts": 0,
+   "channel": "beaststatsofficial",
+   "delete_token": "",
+   "discovered_at": "2026-11-17T00:24:14+00:00",
+   "duration_seconds": 13082,
+   "ended_at": null,
+   "filename": "",
+   "last_error": "",
+   "link": "",
+   "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
+   "preview_url": "https://gachigasm.eu.srcdn.net/ddlprev/9bfa4f10-5574-4845-923b-f53ee0d9e47c/v.mp4?iv=AsA3tenqnccYqxEe8lobTQ&enc=eTYanWEOYDvDGehDZ9xzlurPVMKwAxDWnburOElTFV-qun3IQVVahnkByS1dG8fPRb7Aw7tL4rSwGUsjO47StGzxbi__4bKn7_2lHnA3tiCnGLCCM9I7eva3D-Ss-igTs8FIir1kLAGYJPhSpa10Z9s6333j1UGonz1x1VWuh9gK6kJ1iBMXleQBxaBAyMBzbkzBUI3qTmAdJLFHyf32_awtEnFuOiRMMuMt19WhUJMRC-ndIQP3JvtviwTvaglmf2L59i2P-wX67av5GkGE729x3VqtPg3o9UPpQgFvHRBzRyMRjaN--0J2fPnYVNVLpVfvLfaUI4xgoFNRVw6kY1JJ6OMz8dmoTj8RPAsC69aaX9ElnsJvXtD-5GzVGv2MHUR10kllLVgQCPM_SB5Mu8p_7wp8n0PQqQN21VSZMNIuV3OrJgiYOSe49CZdoyj-pIaMi_EtWfHWraFqzpieIyl0Rk_pSLwPLuAKEy9T185UBkZspjt_CTlLv6h5TqeVq450GFkxyy3VhRdW73W1KDmroLGemr67I7_OaDazUvWsQCakvpcU7oPgpay5aKrR",
+   "rec_date": "2026-11-16",
+   "sha256": "",
+   "size_bytes": null,
+   "source_id": "244647653",
+   "status": "discovered",
    "title": "Indian Streamer Reacts 🍿"
   }
  },
@@ -392,8 +411,8 @@
    "recording_ids": [
     "243161666"
    ],
-   "skip_reason": "",
-   "skipped": false
+   "skip_reason": "older than the 2-day freshness window (+1d grace)",
+   "skipped": true
   },
   "beaststatsofficial|2026-11-15": {
    "announced": false,
@@ -405,6 +424,20 @@
    "rec_date": "2026-11-15",
    "recording_ids": [
     "243910640"
+   ],
+   "skip_reason": "",
+   "skipped": false
+  },
+  "beaststatsofficial|2026-11-16": {
+   "announced": false,
+   "announced_at": "",
+   "channel": "beaststatsofficial",
+   "key": "beaststatsofficial|2026-11-16",
+   "last_activity": "2026-11-17T00:24:14+00:00",
+   "message_url": "",
+   "rec_date": "2026-11-16",
+   "recording_ids": [
+    "244647653"
    ],
    "skip_reason": "",
    "skipped": false
