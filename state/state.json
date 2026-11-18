@@ -1,6 +1,6 @@
 {
  "meta": {
-  "last_saved": "2026-11-17T23:59:12+00:00"
+  "last_saved": "2026-11-18T07:01:22+00:00"
  },
  "recordings": {
   "235113230": {
@@ -251,7 +251,7 @@
    "title": "Indian Streamer Reacts 🍿"
   },
   "244647653": {
-   "attempts": 3,
+   "attempts": 4,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-17T00:24:14+00:00",
@@ -270,14 +270,14 @@
    "title": "Indian Streamer Reacts 🍿"
   },
   "245481732": {
-   "attempts": 0,
+   "attempts": 1,
    "channel": "beaststatsofficial",
    "delete_token": "",
    "discovered_at": "2026-11-17T23:58:55+00:00",
    "duration_seconds": 5864,
    "ended_at": null,
    "filename": "",
-   "last_error": "",
+   "last_error": "download failed after 3 attempts: 403 Client Error: Forbidden for url: https://walterlike.eu.srcdn.net/ddlprev/3b422971-f471-421b-9ef8-dc030acd00d0/v.mp4?iv=4eQA9P1z_k2BUhzTd7qscQ&enc=oGt1h9oB1hLXL-y_Hi7-j0quH-LaRrk9quWx37MW6wRQ_1cW0Lqnh6ePwoMbS6hiYSrjMKA2e5HuZYoLvboS0oJwle_EG50m3qkl4gdKDaXt357XA0dG",
    "link": "",
    "page_url": "https://streamrecorder.io/twitch/beaststatsofficial",
    "preview_url": "https://walterlike.eu.srcdn.net/ddlprev/3b422971-f471-421b-9ef8-dc030acd00d0/v.mp4?iv=4eQA9P1z_k2BUhzTd7qscQ&enc=oGt1h9oB1hLXL-y_Hi7-j0quH-LaRrk9quWx37MW6wRQ_1cW0Lqnh6ePwoMbS6hiYSrjMKA2e5HuZYoLvboS0oJwle_EG50m3qkl4gdKDaXt357XA0dGXvSw_Jurquo8q1TwcFOnfnB69aXy4DNDS3Nnael5sBAmG1XlFJ93LQemt3Ukw0OKJEr8nIwGnBOsD3kC9OFt-fflkqJpMNUjESJIZW9TFAxX5Wqw548qekt-z2PvznvScmHRcKB177uxizI847iOZYgk-2-C11zu4odLHWJD_Sjd91OFR7oYlV70vl_COvKUUeIL_1t1EtgvTHjp0h6vgp9uzW7srFaXHDPA42GlWvbw_wznpQteUYoiOy8axlmZGYTE6q4p84ONmdwlgdedxjlTO3guch67qRdF20lgsUp5JA_dJBVA0QGB_Kl9pNah80rAE3Bnhtbvt8dJcr4MgiwluAYa7vrkPDEv6x33fVrVCe8Hzh4daTLOp0uVTKWMazLBjHex7iTJi3qiImbBQRkAQFKiZmgocJNImDrk2jFHLkdqwli_GS3Zp8OvyGbKjhS8YWLKO4tA",
@@ -285,7 +285,7 @@
    "sha256": "",
    "size_bytes": null,
    "source_id": "245481732",
-   "status": "discovered",
+   "status": "downloading",
    "title": "Indian Streamer Reacts 🍿"
   }
  },
